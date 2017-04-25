@@ -4,6 +4,7 @@ project(UpRun)
 set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES main.cpp entities/entity.cpp entities/entity.h gui/gui.cpp gui/gui.h Game.cpp Game.h utils/config.cpp utils/config.h utils/exceptions.h entities/hero.cpp entities/hero.h entities/views/heroView.cpp entities/views/heroView.h)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-long-long -pedantic")
 add_executable(UpRun ${SOURCE_FILES})
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")

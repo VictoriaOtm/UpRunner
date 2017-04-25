@@ -27,8 +27,14 @@ void game::Game::run() throw(std::runtime_error) {
 }
 
 void game::Game::updateWindow() noexcept {
+    sf::RectangleShape floor(sf::Vector2f(400, 300));
+    floor.setPosition(0, 300);
+    floor.setFillColor(sf::Color(255, 255, 250));
+
     _window.clear(sf::Color::Black);
     drawWindow();
+
+    _window.draw(floor);
     _window.display();
 }
 
@@ -49,23 +55,28 @@ void game::Game::eventDispatcher() noexcept {
 
             case sf::Event::KeyPressed: {
                 switch (event.key.code) {
-                    case sf::Keyboard::Key::Left:{
+                    case sf::Keyboard::Key::Left: {
                         _hero.changeMovementVec(game::movement::left, 0);
                         break;
                     }
 
-                    case sf::Keyboard::Key::Right:{
+                    case sf::Keyboard::Key::Right: {
                         _hero.changeMovementVec(game::movement::right, 0);
                         break;
                     }
 
-                    case sf::Keyboard::Key::Up:{
+                    case sf::Keyboard::Key::Up: {
                         _hero.changeMovementVec(0, game::movement::up);
                         break;
                     }
 
-                    case sf::Keyboard::Key::Down:{
+                    case sf::Keyboard::Key::Down: {
                         _hero.changeMovementVec(0, game::movement::down);
+                        break;
+                    }
+
+                    case sf::Keyboard::Key::Space: {
+                        _hero.jump();
                         break;
                     }
 
@@ -78,23 +89,27 @@ void game::Game::eventDispatcher() noexcept {
 
             case sf::Event::KeyReleased: {
                 switch (event.key.code) {
-                    case sf::Keyboard::Key::Left:{
+                    case sf::Keyboard::Key::Left: {
                         _hero.changeMovementVec(game::movement::right, 0);
                         break;
                     }
 
-                    case sf::Keyboard::Key::Right:{
+                    case sf::Keyboard::Key::Right: {
                         _hero.changeMovementVec(game::movement::left, 0);
                         break;
                     }
 
-                    case sf::Keyboard::Key::Up:{
+                    case sf::Keyboard::Key::Up: {
                         _hero.changeMovementVec(0, game::movement::down);
                         break;
                     }
 
-                    case sf::Keyboard::Key::Down:{
+                    case sf::Keyboard::Key::Down: {
                         _hero.changeMovementVec(0, game::movement::up);
+                        break;
+                    }
+
+                    case sf::Keyboard::Key::Space: {
                         break;
                     }
 

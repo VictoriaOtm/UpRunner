@@ -31,6 +31,7 @@ namespace game {
         void drawWindow() noexcept;
 
         void eventDispatcher() noexcept;
+
     };
 }
 

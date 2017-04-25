@@ -18,7 +18,7 @@ namespace game {
         left = -1,
         right = 1,
         up = -1,
-        down = 1
+        down = 1,
     };
 
     class heroView : public hero {
@@ -34,17 +34,24 @@ namespace game {
         void changeMovementVec(const int xRotation, const int yRotation);
 
     private:
+        void parseTexture();
+
+        void collisionCheck(int time);
+
+        void alterMovementVec();
+
+        void gravityFall(int time);
+
         int _tileXSize = 128;
         int _tileYSize = 128;
 
         sf::Texture _texture;
-        std::vector<std::vector<sf::Sprite>> _sprites;
 
-        void parseTexture();
+        std::vector<std::vector<sf::Sprite>> _sprites;
 
         sf::Vector2i _movementVector = sf::Vector2i(0, 0);
 
-        sf::Sprite* _curSprite = nullptr;
+        sf::Sprite *_curSprite = nullptr;
 
         uint8_t _curFacing = heroSpritesFacing::Right;
 

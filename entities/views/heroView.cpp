@@ -13,14 +13,18 @@ game::heroView::heroView() throw(game::error::textureNotFound) {
 }
 
 void game::heroView::update(int time) {
+    collisionCheck(time);
+    alterMovementVec();
+    gravityFall(time);
+
     switch (_movementVector.x) {
         case game::movement::left: {
-            alterX(_speed * time * game::movement::left / 50);
+            alterX(_xSpeed * time * game::movement::left / 50);
             break;
         }
 
         case game::movement::right: {
-            alterX(_speed * time * game::movement::right / 50);
+            alterX(_xSpeed * time * game::movement::right / 50);
             break;
         }
 
@@ -29,28 +33,31 @@ void game::heroView::update(int time) {
         }
     }
 
-    switch (_movementVector.y) {
-        case game::movement::up: {
-            alterY(_speed * time * game::movement::up / 50);
-            break;
-        }
+    //перепишется в зависимости от лестниц
+//    switch (_movementVector.y) {
+//        case game::movement::up: {
+//            alterY(_xSpeed * time * game::movement::up / 50);
+//            break;
+//        }
+//
+//        case game::movement::down: {
+//            alterY(_xSpeed * time * game::movement::down / 50);
+//            break;
+//        }
+//
+//        default: {
+//            break;
+//        }
+//    }
 
-        case game::movement::down: {
-            alterY(_speed * time * game::movement::down / 50);
-            break;
-        }
-
-        default: {
-            break;
-        }
-    }
-
-    if (_movementVector.y != 0 || _movementVector.x != 0) {
+    if (_movementVector.x != 0) {
         _curFrame += time / 80.d;
         _curFrame >= 3 ? _curFrame = 0 : _curFrame;
     } else {
         _curFrame = 0;
     }
+
+    _collision.reset();
 
 }
 
@@ -102,4 +109,56 @@ void game::heroView::parseTexture() {
 void game::heroView::changeMovementVec(const int xRotation, const int yRotation) {
     _movementVector.x += xRotation;
     _movementVector.y += yRotation;
+}
+
+void game::heroView::collisionCheck(int time) {
+    sf::FloatRect heroNextRect = _curSprite->getGlobalBounds();
+    heroNextRect.top += _ySpeed * time / 50;
+
+    switch (_movementVector.x){
+        case game::movement::left:{
+            heroNextRect.left += _xSpeed * time * game::movement::left / 50;
+            break;
+        }
+
+        case game::movement::right:{
+            heroNextRect.left += _xSpeed * time * game::movement::right / 50;
+            break;
+        }
+
+        default:{
+            break;
+        }
+    }
+
+    if (heroNextRect.intersects(sf::FloatRect(0, 300, 400, 300))) {
+        _collision.down = true;
+    }
+}
+
+void game::heroView::alterMovementVec() {
+    if ((_movementVector.x == game::movement::right && _collision.right) ||
+        (_movementVector.x == game::movement::left && _collision.left)) {
+
+        _movementVector.x = 0;
+    }
+
+    if ((_movementVector.y == game::movement::up && _collision.up) ||
+        (_movementVector.y == game::movement::down && _collision.down)) {
+
+        _movementVector.y = 0;
+    }
+}
+
+void game::heroView::gravityFall(int time) {
+    if (!_collision.down) {
+        alterY(_ySpeed * time / 50);
+        _ySpeed += _gravity * time / 85;
+    }
+     else {
+        if (_ySpeed > 0){
+            _ySpeed = 0;
+            _jumpsDone = 0;
+        }
+    }
 }

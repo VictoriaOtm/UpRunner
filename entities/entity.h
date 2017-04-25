@@ -22,6 +22,8 @@ namespace game {
 
         void alterY(double dy);
 
+        void jump();
+
         const double getX() const;
 
         const double getY() const;
@@ -32,7 +34,28 @@ namespace game {
         const std::string _name;
         uint16_t _hp;
 
-        double _speed;
+        uint8_t _jumpsDone;
+
+        double _xSpeed;
+        double _ySpeed;
+
+        const double _ySpeedMax = 30;
+
+        const double _gravity = 10;
+
+        struct collision {
+            collision() : up(false), down(false),
+                          left(false), right(false){}
+
+            void reset(){
+                up = down = left = right = false;
+            }
+
+            bool up;
+            bool down;
+            bool left;
+            bool right;
+        }_collision;
 
         struct position {
             position() : x(0), y(0) {}
