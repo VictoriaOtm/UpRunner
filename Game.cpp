@@ -27,19 +27,25 @@ void game::Game::run() throw(std::runtime_error) {
 }
 
 void game::Game::updateWindow() noexcept {
-    sf::RectangleShape floor(sf::Vector2f(400, 300));
-    floor.setPosition(0, 300);
-    floor.setFillColor(sf::Color(255, 255, 250));
+//    sf::RectangleShape floor(sf::Vector2f(400, 300));
+//    floor.setPosition(0, 300);
+//    floor.setFillColor(sf::Color(255, 255, 250));
 
     _window.clear(sf::Color::Black);
     drawWindow();
 
-    _window.draw(floor);
+//    _window.draw(floor);
     _window.display();
 }
 
 void game::Game::drawWindow() noexcept {
     _hero.draw(_window);
+
+    //create map
+    _block.setY(300);
+    _block.draw(_window); //
+    _block2.setY(500);
+    _block2.draw(_window);
 }
 
 void game::Game::eventDispatcher() noexcept {

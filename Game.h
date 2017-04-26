@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include "utils/config.h"
 #include "entities/views/heroView.h"
+#include "block/blockView/blockView.h"
 
 namespace game {
     class Game {
@@ -23,6 +24,8 @@ namespace game {
         sf::RenderWindow _window;
 
         heroView _hero;
+
+        blockView _block, _block2;
 
         void updateWindow() noexcept;
 

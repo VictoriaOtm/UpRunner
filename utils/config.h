@@ -49,5 +49,4 @@ namespace game {
     };
 }
 
-
 #endif //UPRUN_CONFIG_H
