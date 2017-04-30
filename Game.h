@@ -7,8 +7,8 @@
 
 #include <SFML/Graphics.hpp>
 #include "utils/config.h"
-#include "entities/views/heroView.h"
-#include "block/blockView/blockView.h"
+#include "object/entities/views/heroView.h"
+#include "object/block/blockView/blockView.h"
 
 namespace game {
     class Game {

@@ -18,24 +18,8 @@ namespace game {
 //            _xSpeed(rhs._xSpeed),
 //            _position(rhs._position.x, rhs._position.y) {}
 
-    void entity::alterX(double dx) {
-        _position.x += dx;
-    }
-
-    void entity::alterY(double dy) {
-        _position.y += dy;
-    }
-
     const double entity::getSpeed() const {
         return _xSpeed;
-    }
-
-    const double entity::getX() const {
-        return _position.x;
-    }
-
-    const double entity::getY() const {
-        return _position.y;
     }
 
     entity::entity() : _hp(100),

@@ -2,13 +2,14 @@
 // Created by otm on 22.04.17.
 //
 #include <iostream>
+#include "../object.h"
 
 #ifndef UPRUN_ENTITY_H
 #define UPRUN_ENTITY_H
 
 namespace game {
 
-    class entity {
+    class entity : public object{
     public:
         entity();
 
@@ -18,15 +19,7 @@ namespace game {
 
         virtual ~entity() noexcept = default;
 
-        void alterX(double dx);
-
-        void alterY(double dy);
-
         void jump();
-
-        const double getX() const;
-
-        const double getY() const;
 
         const double getSpeed() const;
 
@@ -56,15 +49,6 @@ namespace game {
             bool left;
             bool right;
         }_collision;
-
-        struct position {
-            position() : x(0), y(0) {}
-
-            position(double newX, double newY) : x(newX), y(newY) {}
-
-            double x;
-            double y;
-        } _position;
 
     };
 }

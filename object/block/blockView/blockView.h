@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "../block.h"
-#include "../../utils/exceptions.h"
+#include "../../../utils/exceptions.h"
 
 namespace game {
 
@@ -19,11 +19,7 @@ namespace game {
     public:
         blockView() throw(game::error::textureNotFound);
 
-        blockView(const std::string &newName) throw(game::error::textureNotFound);
-
         void draw(sf::RenderWindow &window);
-
-        //void changeMovementVec(const int xRotation, const int yRotation);
 
     private:
         int _tileXSize = 128;

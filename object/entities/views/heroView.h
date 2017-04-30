@@ -7,7 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "../hero.h"
-#include "../../utils/exceptions.h"
+#include "../../../utils/exceptions.h"
 
 namespace game {
     enum heroSpritesFacing {
