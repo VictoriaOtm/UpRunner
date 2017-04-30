@@ -11,7 +11,7 @@
 
 namespace game {
     enum heroSpritesFacing {
-        Ladder, Left, Right, NotUsed
+        Ladder, Left, Right
     };
 
     enum movement {
@@ -43,7 +43,7 @@ namespace game {
         void gravityFall(int time);
 
         int _tileXSize = 128;
-        int _tileYSize = 128;
+        int _tileYSize = 104;
 
         sf::Texture _texture;
 

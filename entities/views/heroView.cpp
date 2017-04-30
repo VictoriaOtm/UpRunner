@@ -5,7 +5,7 @@
 #include "heroView.h"
 
 game::heroView::heroView() throw(game::error::textureNotFound) {
-    if (_texture.loadFromFile("./textures/heroTS.png")) {
+    if (_texture.loadFromFile("./textures/heroTS1.png")) {
         parseTexture();
     } else {
         throw game::error::textureNotFound("Texture not found");
@@ -88,7 +88,7 @@ void game::heroView::draw(sf::RenderWindow &window) {
 }
 
 game::heroView::heroView(const std::string &newName) throw(game::error::textureNotFound) : hero(newName) {
-    if (_texture.loadFromFile("./textures/heroTS.png")) {
+    if (_texture.loadFromFile("./textures/heroTS1.png")) {
         parseTexture();
     } else {
         throw game::error::textureNotFound("Texture not found");
@@ -96,9 +96,9 @@ game::heroView::heroView(const std::string &newName) throw(game::error::textureN
 }
 
 void game::heroView::parseTexture() {
-    _sprites.resize(4);
+    _sprites.resize(3);
 
-    for (int row = 0; row < 4; row++) {
+    for (int row = 0; row < 3; row++) {
         _sprites[row].resize(3, sf::Sprite(_texture));
 
         for (int col = 0; col < 3; col++) {
