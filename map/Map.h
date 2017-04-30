@@ -6,9 +6,39 @@
 #define UPRUN_MAP_H
 
 
-class Map {
+#include <vector>
+#include <boost/circular_buffer.hpp>
 
-};
+namespace game {
+    enum blockType{
+        empty,
+        staticFloor, //game::blockType::empty
+        collapsingFloor,
+        ladder,
+        spikes,
+        quicksand
+    };
+
+    class Map {
+    public:
+        Map();
+
+        Map(const Map& rhs);
+
+        ~Map() noexcept = default;
+
+        void generate();
+
+    private:
+        boost::circular_buffer<std::vector<char>> _map;
+
+        std::size_t curLine;
+
+        uint16_t _height;
+        uint16_t _width;
+    };
+
+}
 
 
 #endif //UPRUN_MAP_H

@@ -57,6 +57,8 @@ namespace game {
 
         float _curFrame = 0;
 
+        const double _speedFactor = 50;
+
     };
 }
 

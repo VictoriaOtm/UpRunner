@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.6.3)
 project(UpRun)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -14,3 +14,7 @@ if (SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(UpRun ${SFML_LIBRARIES})
 endif ()
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+endif()

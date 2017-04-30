@@ -13,18 +13,21 @@ game::heroView::heroView() throw(game::error::textureNotFound) {
 }
 
 void game::heroView::update(int time) {
+    //move
+    // check collision -> vector of collision -> move if true
+
     collisionCheck(time);
     alterMovementVec();
     gravityFall(time);
 
     switch (_movementVector.x) {
         case game::movement::left: {
-            alterX(_xSpeed * time * game::movement::left / 50);
+            alterX(_xSpeed * time * game::movement::left / _speedFactor);
             break;
         }
 
         case game::movement::right: {
-            alterX(_xSpeed * time * game::movement::right / 50);
+            alterX(_xSpeed * time * game::movement::right / _speedFactor);
             break;
         }
 
@@ -113,16 +116,16 @@ void game::heroView::changeMovementVec(const int xRotation, const int yRotation)
 
 void game::heroView::collisionCheck(int time) {
     sf::FloatRect heroNextRect = _curSprite->getGlobalBounds();
-    heroNextRect.top += _ySpeed * time / 50;
+    heroNextRect.top += _ySpeed * time / _speedFactor;
 
     switch (_movementVector.x){
         case game::movement::left:{
-            heroNextRect.left += _xSpeed * time * game::movement::left / 50;
+            heroNextRect.left += _xSpeed * time * game::movement::left / _speedFactor;
             break;
         }
 
         case game::movement::right:{
-            heroNextRect.left += _xSpeed * time * game::movement::right / 50;
+            heroNextRect.left += _xSpeed * time * game::movement::right / _speedFactor;
             break;
         }
 
@@ -152,7 +155,7 @@ void game::heroView::alterMovementVec() {
 
 void game::heroView::gravityFall(int time) {
     if (!_collision.down) {
-        alterY(_ySpeed * time / 50);
+        alterY(_ySpeed * time / _speedFactor);
         _ySpeed += _gravity * time / 85;
     }
      else {
