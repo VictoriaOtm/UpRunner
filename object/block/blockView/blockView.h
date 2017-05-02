@@ -8,11 +8,7 @@
 namespace game {
 
     enum blockSpritesFacing_row{
-        NotUsed1, NotUsed2, NotUsed3, NotUsed4, NotUsed5, NotUsed6, Block, NotUsed8
-    };
-    enum blockSpritesFacing_col{
-        NotUsed_1, NotUsed_2, NotUsed_3, NotUsed_4, NotUsed_5, NotUsed_6, Red, NotUsed_8,
-        Gray, Brown, NotUsed_11, NotUsed_12, NotUsed_13
+        Block
     };
 
     class blockView : public block {
@@ -21,16 +17,13 @@ namespace game {
 
         void draw(sf::RenderWindow &window);
 
+        void update();
+
     private:
-        int _tileXSize = 128;
-        int _tileYSize = 128;
 
-        sf::Texture _texture;
-        std::vector<std::vector<sf::Sprite>> _sprites;
+        sf::Texture _blockT;
 
-        void parseTexture();
-
-        sf::Sprite* _curSprite = nullptr;
+        sf::Sprite _block;
     };
 }
 

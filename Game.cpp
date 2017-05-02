@@ -39,13 +39,10 @@ void game::Game::updateWindow() noexcept {
 }
 
 void game::Game::drawWindow() noexcept {
-    _hero.draw(_window);
-
     //create map
-    _block.setY(300);
     _block.draw(_window); //
-    _block2.setY(500);
-    _block2.draw(_window);
+    _hero.draw(_window);
+    _gui.draw(_window);
 }
 
 void game::Game::eventDispatcher() noexcept {
@@ -72,11 +69,13 @@ void game::Game::eventDispatcher() noexcept {
                     }
 
                     case sf::Keyboard::Key::Up: {
+                        _hero.increaseHp(30);
                         _hero.changeMovementVec(0, game::movement::up);
                         break;
                     }
 
                     case sf::Keyboard::Key::Down: {
+                        _hero.decreaseHp(30);
                         _hero.changeMovementVec(0, game::movement::down);
                         break;
                     }
@@ -135,6 +134,8 @@ void game::Game::eventDispatcher() noexcept {
 
 void game::Game::updateGame(int time) noexcept {
     _hero.update(time);
+    _gui.update(_hero);
+    _block.update();
     //mapUpdate ...
     return;
 }

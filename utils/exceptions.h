@@ -36,6 +36,11 @@ namespace game {
             textureNotFound(const std::string &err) : basicError(err) {}
         };
 
+        class fontNotFound : public basicError {
+        public:
+            fontNotFound(const std::string &err) : basicError(err) {}
+        };
+
     }
 }
 

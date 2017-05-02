@@ -13,8 +13,6 @@ namespace game {
     public:
         entity();
 
-        entity(const std::string &new_name);
-
         //virtual entity(const entity &rhs);
 
         virtual ~entity() noexcept = default;
@@ -23,8 +21,16 @@ namespace game {
 
         const double getSpeed() const;
 
+        const uint16_t getHp() const;
+
+        void increaseHp(const uint16_t dHp);
+
+        void decreaseHp(const uint16_t dHp);
+
     protected:
         const std::string _name;
+
+        uint16_t _hpMax = 250;
         uint16_t _hp;
 
         uint8_t _jumpsDone;

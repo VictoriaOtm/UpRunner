@@ -5,13 +5,29 @@
 #include "hero.h"
 
 
-namespace game{
+namespace game {
 
-    hero::hero(const std::string &newName) : entity(newName) {
+    hero::hero() :
+            _coins(0),
+            _lifes(2) {}
 
+    const unsigned int hero::getCoins() const {
+        return _coins;
     }
 
-    hero::hero() {
+    const uint16_t hero::getLifes() const {
+        return _lifes;
+    }
 
+    void hero::increaseCoins() {
+        ++_coins;
+    }
+
+    void hero::decreaseLifes() {
+        --_lifes;
+    }
+
+    void hero::increaseLifes() {
+        ++_lifes;
     }
 }

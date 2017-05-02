@@ -87,14 +87,6 @@ void game::heroView::draw(sf::RenderWindow &window) {
     window.draw(*_curSprite);
 }
 
-game::heroView::heroView(const std::string &newName) throw(game::error::textureNotFound) : hero(newName) {
-    if (_texture.loadFromFile("./textures/heroTS1.png")) {
-        parseTexture();
-    } else {
-        throw game::error::textureNotFound("Texture not found");
-    }
-}
-
 void game::heroView::parseTexture() {
     _sprites.resize(3);
 

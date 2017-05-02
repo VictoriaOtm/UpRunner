@@ -13,14 +13,23 @@ namespace game{
     public:
         hero();
 
-        hero(const std::string& newName);
-
         //virtual hero(const hero& rhs) = default;
 
         virtual ~hero() noexcept = default;
 
-    private:
+        const unsigned int getCoins() const;
 
+        const uint16_t getLifes() const;
+
+        void increaseCoins();
+
+        void decreaseLifes();
+
+        void increaseLifes();
+
+    private:
+        unsigned int _coins;
+        uint16_t _lifes;
     };
 }
 

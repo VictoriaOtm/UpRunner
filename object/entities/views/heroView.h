@@ -25,8 +25,6 @@ namespace game {
     public:
         heroView() throw(game::error::textureNotFound);
 
-        heroView(const std::string &newName) throw(game::error::textureNotFound);
-
         void update(int time);
 
         void draw(sf::RenderWindow &window);

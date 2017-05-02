@@ -9,6 +9,7 @@
 #include "utils/config.h"
 #include "object/entities/views/heroView.h"
 #include "object/block/blockView/blockView.h"
+#include "interface/gui/gui.h"
 
 namespace game {
     class Game {
@@ -25,7 +26,9 @@ namespace game {
 
         heroView _hero;
 
-        blockView _block, _block2;
+        blockView _block;
+
+        gui _gui;
 
         void updateWindow() noexcept;
 

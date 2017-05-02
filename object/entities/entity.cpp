@@ -5,13 +5,6 @@
 #include "entity.h"
 
 namespace game {
-    entity::entity(const std::string &new_name) :
-            _name(new_name),
-            _hp(100),
-            _xSpeed(12),
-            _ySpeed(0),
-            _jumpsDone(0)  {}
-
 //    entity::entity(const entity &rhs) :
 //            _name(rhs._name),
 //            _hp(rhs._hp),
@@ -22,7 +15,7 @@ namespace game {
         return _xSpeed;
     }
 
-    entity::entity() : _hp(100),
+    entity::entity() : _hp(250),
                        _xSpeed(12),
                        _ySpeed(0),
                        _jumpsDone(0){}
@@ -33,5 +26,27 @@ namespace game {
             _ySpeed = -_ySpeedMax;
             ++_jumpsDone;
         }
+    }
+
+    void entity::increaseHp(const uint16_t dHp) {
+        if (_hp + dHp <= _hpMax){
+            _hp += dHp;
+        }
+        else{
+            _hp = _hpMax;
+        }
+    }
+
+    void entity::decreaseHp(const uint16_t dHp) {
+        if (_hp - dHp >= 0){
+            _hp -= dHp;
+        }
+        else{
+            _hp = 0;
+        }
+    }
+
+    const uint16_t entity::getHp() const {
+        return _hp;
     }
 }
