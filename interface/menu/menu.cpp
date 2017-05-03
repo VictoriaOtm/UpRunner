@@ -25,14 +25,15 @@ const bool game::menu::isMenu() const {
 }
 
 void game::menu::drawMenu(sf::RenderWindow &window) {
-    window.clear(sf::Color::Black);
+    window.clear(sf::Color::Transparent);
+    if(_menu){
+        window.draw(_background);
+        window.draw(_newGame);
+        window.draw(_settings);
+        window.draw(_quit);
 
-    window.draw(_background);
-    window.draw(_newGame);
-    window.draw(_settings);
-    window.draw(_quit);
-
-    window.display();
+        window.display();
+    }
 }
 
 void game::menu::updateMenu() {
