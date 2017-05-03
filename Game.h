@@ -10,6 +10,7 @@
 #include "object/entities/views/heroView.h"
 #include "object/block/blockView/blockView.h"
 #include "interface/gui/gui.h"
+#include "interface/menu/menu.h"
 
 namespace game {
     class Game {
@@ -22,6 +23,7 @@ namespace game {
 
     private:
         config _config;
+
         sf::RenderWindow _window;
 
         heroView _hero;
@@ -29,6 +31,10 @@ namespace game {
         blockView _block;
 
         gui _gui;
+
+        menu _menu;
+
+        bool isGame;
 
         void updateWindow() noexcept;
 

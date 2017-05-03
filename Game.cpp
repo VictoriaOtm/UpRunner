@@ -6,7 +6,7 @@
 #include "Game.h"
 
 game::Game::Game() :
-        _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()) {
+        _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()), isGame(false){
     _window.setKeyRepeatEnabled(false);
     _window.setFramerateLimit(_config.getMenuFPSLimit());
     _window.setVerticalSyncEnabled(_config.getVSync());
@@ -14,10 +14,12 @@ game::Game::Game() :
 
 void game::Game::run() throw(std::runtime_error) {
     sf::Clock clock;
-    sf::Time elapsed = clock.restart();
+    sf::Time elapsed;
 
     while (_window.isOpen()) {
         elapsed = clock.restart();
+
+        _menu.runMenu(_window);
 
         eventDispatcher();
         updateGame(elapsed.asMilliseconds());
@@ -82,6 +84,11 @@ void game::Game::eventDispatcher() noexcept {
 
                     case sf::Keyboard::Key::Space: {
                         _hero.jump();
+                        break;
+                    }
+
+                    case sf::Keyboard::Key::Escape: {
+                        _menu.runMenu(_window);
                         break;
                     }
 
