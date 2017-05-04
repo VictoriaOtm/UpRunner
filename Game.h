@@ -11,6 +11,7 @@
 #include "object/block/blockView/blockView.h"
 #include "interface/gui/gui.h"
 #include "interface/menu/menu.h"
+#include "map/Map.h"
 
 namespace game {
     class Game {
@@ -34,7 +35,7 @@ namespace game {
 
         menu _menu;
 
-//        bool isGame;
+        Map _map;
 
         void updateWindow() noexcept;
 

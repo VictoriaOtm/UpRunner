@@ -69,12 +69,40 @@ void game::menu::eventDispatcher() {
                         break;
                     }
                 }
-
                 break;
+            }
+
+            case sf::Event::MouseButtonPressed :{
+
             }
 
             default: {
                 break;
+            }
+        }
+
+        if (_newGame.getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
+            _choice = game::choice::newGame;
+        } else if (_quit.getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
+            _choice = game::choice::quit;
+        } else if (_settings.getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)){
+            _choice = game::choice::settings;
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            switch (_choice) {
+                case game::choice::newGame: {
+                    _menu = false;
+                    break;
+                }
+                case game::choice::quit: {
+                    _menu = false;
+                    _window.close();
+                    break;
+                }
+                default: {
+
+                }
             }
         }
     }

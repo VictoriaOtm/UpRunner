@@ -29,6 +29,8 @@ namespace game {
 
         void generate();
 
+        const boost::circular_buffer<std::vector<char>> getBuffer() const;
+
     private:
         boost::circular_buffer<std::vector<char>> _map;
 
