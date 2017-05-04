@@ -3,6 +3,7 @@
 //
 
 #include <SFML/Window/Event.hpp>
+#include <iostream>
 #include "menu.h"
 
 game::menu::menu(sf::RenderWindow &window, config &cfg) throw(game::error::textureNotFound)
@@ -72,21 +73,24 @@ void game::menu::eventDispatcher() {
                 break;
             }
 
-            case sf::Event::MouseButtonPressed :{
+            case sf::Event::MouseMoved :{
 
+                if (_newGame.getGlobalBounds().contains(sf::Mouse::getPosition(_window).x, sf::Mouse::getPosition(_window).y)) {
+                    _choice = game::choice::newGame;
+                } else if (_quit.getGlobalBounds().contains(sf::Mouse::getPosition(_window).x, sf::Mouse::getPosition(_window).y)) {
+                    _choice = game::choice::quit;
+                } else if (_settings.getGlobalBounds().contains(sf::Mouse::getPosition(_window).x, sf::Mouse::getPosition(_window).y)){
+                    _choice = game::choice::settings;
+                }
+                else {
+                    _choice = game::choice::none;
+                }
+                break;
             }
 
             default: {
                 break;
             }
-        }
-
-        if (_newGame.getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
-            _choice = game::choice::newGame;
-        } else if (_quit.getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
-            _choice = game::choice::quit;
-        } else if (_settings.getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)){
-            _choice = game::choice::settings;
         }
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -95,13 +99,17 @@ void game::menu::eventDispatcher() {
                     _menu = false;
                     break;
                 }
+                case game::choice::settings:{
+                    break;
+                }
+
                 case game::choice::quit: {
                     _menu = false;
                     _window.close();
                     break;
                 }
                 default: {
-
+                    break;
                 }
             }
         }

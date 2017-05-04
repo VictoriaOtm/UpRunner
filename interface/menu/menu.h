@@ -13,7 +13,8 @@
 
 namespace game {
     enum choice {
-        newGame = 1,
+        none,
+        newGame,
         settings,
         quit
     };

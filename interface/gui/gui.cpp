@@ -25,8 +25,8 @@ game::gui::gui()
         _lifesNum.setCharacterSize(28);
         _coinsNum.setCharacterSize(28);
 
-        _lifesNum.setFillColor(sf::Color::White);
-        _coinsNum.setFillColor(sf::Color::White);
+        _lifesNum.setColor(sf::Color::White);
+        _coinsNum.setColor(sf::Color::White);
 
     }
     else throw game::error::fontNotFound("Font not found");

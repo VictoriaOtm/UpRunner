@@ -15,12 +15,12 @@ game::Game::Game() :
 void game::Game::run() throw(std::runtime_error) {
 
     //вывод генерируемой мапы в консоль для проверки
-//    for (std::vector<char> line : _map.getBuffer()){
-//        for (char block : line){
-//            std::cout << line[block] << ' ';
-//        }
-//        std::cout << std::endl;
-//    }
+    for (std::vector<char> line : _map.getBuffer()){
+        for (char block : line){
+            std::cout << block << ' ';
+        }
+        std::cout << std::endl;
+    }
 
     _menu.run();
 
