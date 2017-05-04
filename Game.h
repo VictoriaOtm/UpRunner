@@ -34,7 +34,7 @@ namespace game {
 
         menu _menu;
 
-        bool isGame;
+//        bool isGame;
 
         void updateWindow() noexcept;
 

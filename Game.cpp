@@ -6,37 +6,31 @@
 #include "Game.h"
 
 game::Game::Game() :
-        _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()), isGame(false){
+        _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()), _menu(_window, _config) {
     _window.setKeyRepeatEnabled(false);
     _window.setFramerateLimit(_config.getMenuFPSLimit());
     _window.setVerticalSyncEnabled(_config.getVSync());
 }
 
 void game::Game::run() throw(std::runtime_error) {
+    _menu.run();
+
     sf::Clock clock;
     sf::Time elapsed;
 
     while (_window.isOpen()) {
-        elapsed = clock.restart();
-
-        _menu.runMenu(_window);
-
         eventDispatcher();
-        updateGame(elapsed.asMilliseconds());
+        elapsed = clock.restart();
         updateWindow();
+        updateGame(elapsed.asMilliseconds());
     }
 
 }
 
 void game::Game::updateWindow() noexcept {
-//    sf::RectangleShape floor(sf::Vector2f(400, 300));
-//    floor.setPosition(0, 300);
-//    floor.setFillColor(sf::Color(255, 255, 250));
-
     _window.clear(sf::Color::Black);
     drawWindow();
 
-//    _window.draw(floor);
     _window.display();
 }
 
@@ -88,7 +82,7 @@ void game::Game::eventDispatcher() noexcept {
                     }
 
                     case sf::Keyboard::Key::Escape: {
-                        _menu.runMenu(_window);
+                        _menu.run();
                         break;
                     }
 

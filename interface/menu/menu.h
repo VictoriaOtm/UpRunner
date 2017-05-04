@@ -9,9 +9,10 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "../../utils/exceptions.h"
+#include "../../utils/config.h"
 
-namespace game{
-    enum choice{
+namespace game {
+    enum choice {
         newGame = 1,
         settings,
         quit
@@ -19,21 +20,28 @@ namespace game{
 
     class menu {
     public:
-        menu() throw(game::error::textureNotFound);
+        menu(sf::RenderWindow &window, config &cfg) throw(game::error::textureNotFound);
 
         ~menu() noexcept = default;
 
-        const bool isMenu() const;
-
-        void drawMenu(sf::RenderWindow &window);
+        void drawMenu();
 
         void updateMenu();
 
-        void runMenu(sf::RenderWindow &window);
+        void run();
 
-        void eventDispatcher(sf::RenderWindow &window);
+        void eventDispatcher();
 
     private:
+        sf::RenderWindow &_window;
+
+        unsigned int _height;
+        unsigned int _width;
+
+        uint16_t _choice;
+
+        bool _menu;
+
         sf::Texture _backgroundT;
         sf::Texture _quitT;
         sf::Texture _newGameT;
@@ -43,16 +51,8 @@ namespace game{
         sf::Sprite _quit;
         sf::Sprite _newGame;
         sf::Sprite _settings;
-
-        uint16_t _choice;
-        const uint16_t _height = 960;
-        const uint16_t _width = 832;
-
-        bool _menu;
-
     };
 }
-
 
 
 #endif //UPRUN_MENU_H

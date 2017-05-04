@@ -5,7 +5,9 @@
 #include <SFML/Window/Event.hpp>
 #include "menu.h"
 
-game::menu::menu() throw(game::error::textureNotFound) : _menu(true), _choice(0) {
+game::menu::menu(sf::RenderWindow &window, config &cfg) throw(game::error::textureNotFound)
+        : _window(window), _height(cfg.getVideoMode().height), _width(cfg.getVideoMode().width),
+          _choice(0), _menu(true) {
     if (_backgroundT.loadFromFile("./textures/menu.png")
         && _newGameT.loadFromFile("./textures/newGame.png")
         && _quitT.loadFromFile("./textures/quit.png")
@@ -20,20 +22,14 @@ game::menu::menu() throw(game::error::textureNotFound) : _menu(true), _choice(0)
     }
 }
 
-const bool game::menu::isMenu() const {
-    return _menu;
-}
+void game::menu::drawMenu() {
+    _window.clear(sf::Color::Black);
+    _window.draw(_background);
+    _window.draw(_newGame);
+    _window.draw(_settings);
+    _window.draw(_quit);
 
-void game::menu::drawMenu(sf::RenderWindow &window) {
-    window.clear(sf::Color::Transparent);
-    if(_menu){
-        window.draw(_background);
-        window.draw(_newGame);
-        window.draw(_settings);
-        window.draw(_quit);
-
-        window.display();
-    }
+    _window.display();
 }
 
 void game::menu::updateMenu() {
@@ -43,21 +39,22 @@ void game::menu::updateMenu() {
     _quit.setPosition(_width / 4 + 100, _height / 4 + 218);
 }
 
-void game::menu::runMenu(sf::RenderWindow &window) {
+void game::menu::run() {
     _menu = true;
     while (_menu) {
-        eventDispatcher(window);
+        eventDispatcher();
         updateMenu();
-        drawMenu(window);
+        drawMenu();
     }
 }
 
-void game::menu::eventDispatcher(sf::RenderWindow &window) {
+void game::menu::eventDispatcher() {
     sf::Event event;
-    while (window.pollEvent(event)) {
+
+    while (_window.pollEvent(event)) {
         switch (event.type) {
             case sf::Event::Closed: {
-                window.close();
+                _window.close();
                 _menu = false;
                 break;
             }
@@ -68,10 +65,12 @@ void game::menu::eventDispatcher(sf::RenderWindow &window) {
                         _menu = false;
                         break;
                     }
-                    default:{
+                    default: {
                         break;
                     }
                 }
+
+                break;
             }
 
             default: {
