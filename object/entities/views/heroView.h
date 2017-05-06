@@ -6,6 +6,7 @@
 #define UPRUN_HEROVIEW_H
 
 #include <SFML/Graphics.hpp>
+#include <boost/circular_buffer.hpp>
 #include "../hero.h"
 #include "../../../utils/exceptions.h"
 
@@ -25,7 +26,7 @@ namespace game {
     public:
         heroView() throw(game::error::textureNotFound);
 
-        void update(int time);
+        void update(int time, const boost::circular_buffer<std::vector<char>>& _map);
 
         void draw(sf::RenderWindow &window);
 
@@ -34,7 +35,7 @@ namespace game {
     private:
         void parseTexture();
 
-        void collisionCheck(int time);
+        void collisionCheck(int time, const boost::circular_buffer<std::vector<char>>& _map);
 
         void alterMovementVec();
 
@@ -56,6 +57,9 @@ namespace game {
         float _curFrame = 0;
 
         const double _speedFactor = 50;
+
+        bool _isFalling;
+        bool _isLadder;
 
     };
 }

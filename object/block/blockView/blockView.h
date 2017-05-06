@@ -4,18 +4,17 @@
 #include <SFML/Graphics.hpp>
 #include "../block.h"
 #include "../../../utils/exceptions.h"
+#include "../../../map/Map.h"
 
 namespace game {
 
-    enum blockSpritesFacing_row{
-        Block
-    };
+    //enum blockType
 
-    class blockView : public block {
+    class blockView : public Map {
     public:
         blockView() throw(game::error::textureNotFound);
 
-        void draw(sf::RenderWindow &window);
+        void draw(sf::RenderWindow &window, char, int, int);
 
         void update();
 
@@ -23,7 +22,14 @@ namespace game {
 
         sf::Texture _blockT;
 
-        sf::Sprite _block;
+        int _tileXSize = 128;
+        int _tileYSize = 128;
+
+        std::vector<std::vector<sf::Sprite>> _sprites;
+
+        void parseTexture();
+
+        sf::Sprite* _curSprite = nullptr;
     };
 }
 

@@ -24,7 +24,6 @@ game::menu::menu(sf::RenderWindow &window, config &cfg) throw(game::error::textu
 }
 
 void game::menu::drawMenu() {
-    _window.clear(sf::Color::Black);
     _window.draw(_background);
     _window.draw(_newGame);
     _window.draw(_settings);

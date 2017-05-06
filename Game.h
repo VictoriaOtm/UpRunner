@@ -37,6 +37,8 @@ namespace game {
 
         Map _map;
 
+        sf::Color _background;
+
         void updateWindow() noexcept;
 
         void updateGame(int time) noexcept;

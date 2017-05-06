@@ -11,6 +11,5 @@ int main() {
         //logging
         std::cerr << e.what();
     }
-
     return 0;
 }

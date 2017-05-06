@@ -13,10 +13,10 @@ namespace game {
     enum blockType{
         empty,
         staticFloor, //game::blockType::empty
-        collapsingFloor,
         ladder,
-        spikes,
-        quicksand
+        quicksand,
+        collapsingFloor,
+        collFloor1
     };
 
     class Map {

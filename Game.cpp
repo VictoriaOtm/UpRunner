@@ -6,26 +6,25 @@
 #include "Game.h"
 
 game::Game::Game() :
-        _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()), _menu(_window, _config) {
+        _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()), _menu(_window, _config), _background(153, 210, 215) {
     _window.setKeyRepeatEnabled(false);
     _window.setFramerateLimit(_config.getMenuFPSLimit());
     _window.setVerticalSyncEnabled(_config.getVSync());
 }
 
 void game::Game::run() throw(std::runtime_error) {
-
-    //вывод генерируемой мапы в консоль для проверки
-    for (std::vector<char> line : _map.getBuffer()){
-        for (char block : line){
-            std::cout << block << ' ';
-        }
-        std::cout << std::endl;
-    }
-
+    _window.clear(_background);
     _menu.run();
 
     sf::Clock clock;
     sf::Time elapsed;
+
+//    for (std::vector<char> line : _map.getBuffer()){
+//        for (char block : line){
+//            std::cout << block << ' ';
+//        }
+//        std::cout << std::endl;
+//    }
 
     while (_window.isOpen()) {
         eventDispatcher();
@@ -37,15 +36,18 @@ void game::Game::run() throw(std::runtime_error) {
 }
 
 void game::Game::updateWindow() noexcept {
-    _window.clear(sf::Color::Black);
+    _window.clear(_background);
     drawWindow();
 
     _window.display();
 }
 
 void game::Game::drawWindow() noexcept {
-    //create map
-    _block.draw(_window); //
+    for(int i = 0; i < 16; ++i){
+        for(int j = 0; j < 12; ++j){
+            _block.draw(_window, _map.getBuffer()[i][j], i, j);
+        }
+    }
     _hero.draw(_window);
     _gui.draw(_window);
 }
@@ -143,9 +145,8 @@ void game::Game::eventDispatcher() noexcept {
 }
 
 void game::Game::updateGame(int time) noexcept {
-    _hero.update(time);
+    _hero.update(time, _map.getBuffer());
     _gui.update(_hero);
-    _block.update();
     //mapUpdate ...
     return;
 }

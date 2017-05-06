@@ -2,9 +2,10 @@
 // Created by otm on 22.04.17.
 //
 
+#include <math.h>
 #include "heroView.h"
 
-game::heroView::heroView() throw(game::error::textureNotFound) {
+game::heroView::heroView() throw(game::error::textureNotFound): _isFalling(true), _isLadder(false) {
     if (_texture.loadFromFile("./textures/heroTS1.png")) {
         parseTexture();
     } else {
@@ -12,11 +13,11 @@ game::heroView::heroView() throw(game::error::textureNotFound) {
     }
 }
 
-void game::heroView::update(int time) {
+void game::heroView::update(int time, const boost::circular_buffer<std::vector<char>> &_map) {
     //move
     // check collision -> vector of collision -> move if true
 
-    collisionCheck(time);
+    collisionCheck(time, _map);
     alterMovementVec();
     gravityFall(time);
 
@@ -37,21 +38,23 @@ void game::heroView::update(int time) {
     }
 
     //перепишется в зависимости от лестниц
-//    switch (_movementVector.y) {
-//        case game::movement::up: {
-//            alterY(_xSpeed * time * game::movement::up / 50);
-//            break;
-//        }
-//
-//        case game::movement::down: {
-//            alterY(_xSpeed * time * game::movement::down / 50);
-//            break;
-//        }
-//
-//        default: {
-//            break;
-//        }
-//    }
+    if (_isLadder) {
+        switch (_movementVector.y) {
+            case game::movement::up: {
+                alterY(_xSpeed * time * game::movement::up / 50);
+                break;
+            }
+
+            case game::movement::down: {
+                alterY(_xSpeed * time * game::movement::down / 50);
+                break;
+            }
+
+            default: {
+                break;
+            }
+        }
+    }
 
     if (_movementVector.x != 0) {
         _curFrame += time / 80.d;
@@ -81,6 +84,22 @@ void game::heroView::draw(sf::RenderWindow &window) {
             break;
         }
     }
+
+    switch (_movementVector.y) {
+        case game::movement::up : {
+            _curFacing = game::heroSpritesFacing::Ladder;
+            break;
+        }
+
+        case game::movement::down : {
+            _curFacing = game::heroSpritesFacing::Ladder;
+            break;
+        }
+
+        default: {
+            break;
+        }
+    }
     _curSprite = &_sprites[_curFacing][_curFrame];
 
     _curSprite->setPosition(getX(), getY());
@@ -106,28 +125,74 @@ void game::heroView::changeMovementVec(const int xRotation, const int yRotation)
     _movementVector.y += yRotation;
 }
 
-void game::heroView::collisionCheck(int time) {
+void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::vector<char>> &_map) {
+    //_isLadder = false;
     sf::FloatRect heroNextRect = _curSprite->getGlobalBounds();
     heroNextRect.top += _ySpeed * time / _speedFactor;
 
-    switch (_movementVector.x){
-        case game::movement::left:{
+    switch (_movementVector.x) {
+        case game::movement::left: {
             heroNextRect.left += _xSpeed * time * game::movement::left / _speedFactor;
             break;
         }
 
-        case game::movement::right:{
+        case game::movement::right: {
             heroNextRect.left += _xSpeed * time * game::movement::right / _speedFactor;
             break;
         }
 
-        default:{
+        default: {
             break;
         }
     }
 
-    if (heroNextRect.intersects(sf::FloatRect(0, 300, 400, 300))) {
-        _collision.down = true;
+    uint16_t intX = roundf(heroNextRect.left / 64);
+    uint16_t intY = roundf(heroNextRect.top / 64);
+
+    if (heroNextRect.top >= 960) {
+        decreaseHp(_hpMax);
+    } else {
+
+        for (int i = intY - 1; i < 16; i++) {
+            for (int j = intX - 1; j < 12; j++) {
+                char type = _map[i][j];
+
+                if (heroNextRect.intersects(sf::FloatRect(j * 64, 960 - (i + 1) * 64, 64, 64))) {
+                    if (heroNextRect.top + _tileYSize >= 960 - (i + 1) * 64) {
+                        switch (type) {
+                            case '0': {
+                                break;
+                            }
+
+                            case '1': {
+                                _collision.down = true;
+                                break;
+                            }
+
+                            case '2': {
+                                _collision.down = true;
+                                _isLadder = true;
+                            }
+
+                            case '3': {
+                                _collision.down = true;
+                                decreaseHp(1);
+                            }
+
+                            case '4': {
+                                _collision.down = true;
+                                //_map[i][j] = '5';
+                            }
+
+                            default: {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
     }
 }
 
@@ -149,11 +214,11 @@ void game::heroView::gravityFall(int time) {
     if (!_collision.down) {
         alterY(_ySpeed * time / _speedFactor);
         _ySpeed += _gravity * time / 85;
-    }
-     else {
-        if (_ySpeed > 0){
+    } else {
+        if (_ySpeed > 0) {
             _ySpeed = 0;
             _jumpsDone = 0;
         }
     }
 }
+
