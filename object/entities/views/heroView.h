@@ -9,6 +9,8 @@
 #include <boost/circular_buffer.hpp>
 #include "../hero.h"
 #include "../../../utils/exceptions.h"
+#include "../../../map/mapView.h"
+
 
 namespace game {
     enum heroSpritesFacing {
@@ -22,11 +24,23 @@ namespace game {
         down = 1,
     };
 
+    enum collision {
+        colUpLeft,
+        colUp,
+        colUpRight,
+        colLeft,
+        colCenter,
+        colRight,
+        colDownLeft,
+        colDown,
+        colDownRight
+    };
+
     class heroView : public hero {
     public:
         heroView() throw(game::error::textureNotFound);
 
-        void update(int time,const boost::circular_buffer<std::vector<char>>& _map);
+        void update(int time, const boost::circular_buffer<std::vector<Block>>& _blocks);
 
         void draw(sf::RenderWindow &window);
 
@@ -35,13 +49,19 @@ namespace game {
     private:
         void parseTexture();
 
-        void collisionCheck(int time, const boost::circular_buffer<std::vector<char>>& _map);
+        void collisionCheck(int time, const boost::circular_buffer<std::vector<Block>>& _blocks);
+
+        sf::FloatRect getNextFrame(int time);
+
+        void resolveCollision(const uint8_t collisionFrom, const Block& collidedBlock);
+
+        void affectCollision(const uint8_t collisionFrom, const Block& collidedBlock);
 
         void alterMovementVec();
 
         void gravityFall(int time);
 
-        int _tileXSize = 128;
+        int _tileXSize = 94;
         int _tileYSize = 104;
 
         sf::Texture _texture;

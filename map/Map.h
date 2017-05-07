@@ -16,7 +16,7 @@ namespace game {
         ladder,
         quicksand,
         collapsingFloor,
-        collFloor1
+        collFloor
     };
 
     class Map {
@@ -25,16 +25,15 @@ namespace game {
 
         Map(const Map& rhs);
 
-        ~Map() noexcept = default;
+        virtual ~Map() noexcept = default;
 
         void generate();
 
-        const boost::circular_buffer<std::vector<char>> getBuffer() const;
-
-    private:
-        boost::circular_buffer<std::vector<char>> _map;
+    protected:
+        boost::circular_buffer<std::vector<uint8_t >> _map;
 
         std::size_t curLine;
+        bool _mapUpdated;
 
         uint16_t _height;
         uint16_t _width;

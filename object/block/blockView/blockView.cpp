@@ -52,7 +52,7 @@ void game::blockView::draw(sf::RenderWindow &window, char type, int row, int col
         }
 
         case '5': {
-            _curSprite = &_sprites[0][game::blockType::collFloor1];
+            _curSprite = &_sprites[0][game::blockType::collFloor];
             break;
         }
 

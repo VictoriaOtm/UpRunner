@@ -12,6 +12,7 @@
 #include "interface/gui/gui.h"
 #include "interface/menu/menu.h"
 #include "map/Map.h"
+#include "map/mapView.h"
 
 namespace game {
     class Game {
@@ -29,13 +30,11 @@ namespace game {
 
         heroView _hero;
 
-        blockView _block;
+        mapView _map;
 
         gui _gui;
 
         menu _menu;
-
-        Map _map;
 
         sf::Color _background;
 

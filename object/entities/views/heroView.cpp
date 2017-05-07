@@ -13,12 +13,9 @@ game::heroView::heroView() throw(game::error::textureNotFound): _isFalling(true)
     }
 }
 
-void game::heroView::update(int time, const boost::circular_buffer<std::vector<char>> &_map) {
-    //move
-    // check collision -> vector of collision -> move if true
-
-    collisionCheck(time, _map);
-    alterMovementVec();
+void game::heroView::update(int time, const boost::circular_buffer<std::vector<Block>> &_block) {
+    collisionCheck(time, _block);
+    //alterMovementVec();
     gravityFall(time);
 
     switch (_movementVector.x) {
@@ -30,7 +27,9 @@ void game::heroView::update(int time, const boost::circular_buffer<std::vector<c
         }
 
         case game::movement::right: {
-            alterX(_xSpeed * time * game::movement::right / _speedFactor);
+            if (!_collision.right){
+                alterX(_xSpeed * time * game::movement::right / _speedFactor);
+            }
             break;
         }
 
@@ -43,12 +42,12 @@ void game::heroView::update(int time, const boost::circular_buffer<std::vector<c
     if (_isLadder) {
         switch (_movementVector.y) {
             case game::movement::up: {
-                alterY(_xSpeed * time * game::movement::up / 50);
+                alterY(_xSpeed * time * game::movement::up / _speedFactor);
                 break;
             }
 
             case game::movement::down: {
-                alterY(_xSpeed * time * game::movement::down / 50);
+                alterY(_xSpeed * time * game::movement::down / _speedFactor);
                 break;
             }
 
@@ -66,6 +65,7 @@ void game::heroView::update(int time, const boost::circular_buffer<std::vector<c
     }
 
     _collision.reset();
+    _isLadder = false;
 
 }
 
@@ -127,8 +127,7 @@ void game::heroView::changeMovementVec(const int xRotation, const int yRotation)
     _movementVector.y += yRotation;
 }
 
-void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::vector<char>> &_map) {
-    //_isLadder = false;
+sf::FloatRect game::heroView::getNextFrame(int time) {
     sf::FloatRect heroNextRect = _curSprite->getGlobalBounds();
     heroNextRect.top += _ySpeed * time / _speedFactor;
 
@@ -147,75 +146,101 @@ void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::
             break;
         }
     }
+    return heroNextRect;
+}
 
-    uint16_t intX = roundf(heroNextRect.left / 64);
-    uint16_t intY = roundf(heroNextRect.top / 64);
+void game::heroView::resolveCollision(const uint8_t collisionFrom, const Block &collidedBlock) {
+    if (collidedBlock.blockType == game::blockType::ladder) {
+        return;
+    }
+
+    sf::FloatRect blockBounds = collidedBlock.blockSprite.getGlobalBounds();
+
+    switch (collisionFrom) {
+        case game::collision::colUp: {
+            _collision.up = true;
+            _position.y = blockBounds.top + blockBounds.height;
+            break;
+        }
+
+        case game::collision::colLeft: {
+            _collision.left = true;
+            _position.x = blockBounds.left + blockBounds.width;
+            break;
+        }
+
+        case game::collision::colDown: {
+            _collision.down = true;
+            _position.y = blockBounds.top - _tileYSize;
+            break;
+        }
+
+        case game::collision::colRight: {
+            _collision.right = true;
+            _position.x = blockBounds.left - _tileXSize;
+            break;
+        }
+
+        case game::collision::colUpLeft : {
+            break;
+        }
+
+        case game::collision::colUpRight: {
+            break;
+        }
+
+        case game::collision::colDownLeft: {
+
+            break;
+        }
+
+        case game::collision::colDownRight: {
+            break;
+        }
+
+        default: {
+            break;
+        }
+    }
+}
+
+void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &collidedBlock) {
+    switch (collidedBlock.blockType) {
+        case game::blockType::quicksand : {
+            if (collisionFrom == game::collision::colDown ||
+                collisionFrom == game::collision::colDownRight ||
+                collisionFrom == game::collision::colDownLeft) {
+                decreaseHp(1);
+            }
+            break;
+        }
+
+        default: {
+            break;
+        }
+    }
+
+}
+
+void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::vector<Block>> &_blocks) {
+    sf::FloatRect heroNextRect = getNextFrame(time);
+
+    uint16_t xPos = static_cast<uint16_t >(heroNextRect.left / 64);
+    uint16_t yPos = static_cast<uint16_t >(heroNextRect.top / 64 + 3);
 
     if (heroNextRect.top >= 960) {
         decreaseHp(_hpMax);
     } else {
-        for (int i = intY - 1; i < 16; i++) {
-            for (int j = intX - 1; j < 12; j++) {
-                char type = _map[i][j];
+        uint8_t collisionFrom = 0;
 
-                if (heroNextRect.intersects(sf::FloatRect(j * 64, 960 - (i + 1) * 64, 64, 64))) {
-                    if (heroNextRect.top + _tileYSize >= 960 - (i + 1) * 64
-                        && heroNextRect.left + _tileXSize / 2 >= j * 64) {
-                        switch (type) {
-                            case '0': {
-                                _collision.down = false;
-                                break;
-                            }
-
-                            case '1': {
-                                _collision.down = true;
-                                break;
-                            }
-
-                            case '2': {
-                                _collision.down = true;
-                                _isLadder = true;
-                                break;
-                            }
-
-                            case '3': {
-                                _collision.down = true;
-                                decreaseHp(1);
-                                break;
-                            }
-
-                            case '4': {
-                                _collision.down = true;
-                                //_map[i][j] = '5';
-                                break;
-                            }
-
-                            default: {
-                                break;
-                            }
-                        }
-                    }
-//                    if (heroNextRect.left < j * 64){
-//                        switch (type){
-//                            case '0': {
-//                                _collision.left = false;
-//                                break;
-//                            }
-//
-//                            case '2':{
-//                                _collision.left = false;
-//                                break;
-//                            }
-//
-//                            default:{
-//                                _collision.left = true;
-//                                break;
-//                            }
-//                        }
-//                    }
-
+        for (int i = yPos; i < yPos + 3; i++) {
+            for (int j = xPos; j < xPos + 3; j++) {
+                if (heroNextRect.intersects(_blocks[i][j].blockSprite.getGlobalBounds()) &&
+                    _blocks[i][j].blockType != game::blockType::empty) {
+                    resolveCollision(collisionFrom, _blocks[i][j]);
+                    affectCollision(collisionFrom, _blocks[i][j]);
                 }
-
+                ++collisionFrom;
             }
         }
     }
@@ -246,4 +271,8 @@ void game::heroView::gravityFall(int time) {
         }
     }
 }
+
+
+
+
 
