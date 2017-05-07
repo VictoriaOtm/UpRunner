@@ -28,8 +28,6 @@ namespace game {
         void decreaseHp(const uint16_t dHp);
 
     protected:
-        const std::string _name;
-
         uint16_t _hpMax = 250;
         uint16_t _hp;
 

@@ -23,7 +23,9 @@ void game::heroView::update(int time, const boost::circular_buffer<std::vector<c
 
     switch (_movementVector.x) {
         case game::movement::left: {
-            alterX(_xSpeed * time * game::movement::left / _speedFactor);
+            if (!_collision.left){
+                alterX(_xSpeed * time * game::movement::left / _speedFactor);
+            }
             break;
         }
 
@@ -152,15 +154,16 @@ void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::
     if (heroNextRect.top >= 960) {
         decreaseHp(_hpMax);
     } else {
-
         for (int i = intY - 1; i < 16; i++) {
             for (int j = intX - 1; j < 12; j++) {
                 char type = _map[i][j];
 
                 if (heroNextRect.intersects(sf::FloatRect(j * 64, 960 - (i + 1) * 64, 64, 64))) {
-                    if (heroNextRect.top + _tileYSize >= 960 - (i + 1) * 64) {
+                    if (heroNextRect.top + _tileYSize >= 960 - (i + 1) * 64
+                        && heroNextRect.left + _tileXSize / 2 >= j * 64) {
                         switch (type) {
                             case '0': {
+                                _collision.down = false;
                                 break;
                             }
 
@@ -172,16 +175,19 @@ void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::
                             case '2': {
                                 _collision.down = true;
                                 _isLadder = true;
+                                break;
                             }
 
                             case '3': {
                                 _collision.down = true;
                                 decreaseHp(1);
+                                break;
                             }
 
                             case '4': {
                                 _collision.down = true;
                                 //_map[i][j] = '5';
+                                break;
                             }
 
                             default: {
@@ -189,6 +195,25 @@ void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::
                             }
                         }
                     }
+//                    if (heroNextRect.left < j * 64){
+//                        switch (type){
+//                            case '0': {
+//                                _collision.left = false;
+//                                break;
+//                            }
+//
+//                            case '2':{
+//                                _collision.left = false;
+//                                break;
+//                            }
+//
+//                            default:{
+//                                _collision.left = true;
+//                                break;
+//                            }
+//                        }
+//                    }
+
                 }
 
             }

@@ -26,7 +26,7 @@ namespace game {
     public:
         heroView() throw(game::error::textureNotFound);
 
-        void update(int time, const boost::circular_buffer<std::vector<char>>& _map);
+        void update(int time,const boost::circular_buffer<std::vector<char>>& _map);
 
         void draw(sf::RenderWindow &window);
 

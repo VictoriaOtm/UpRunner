@@ -43,8 +43,8 @@ void game::Game::updateWindow() noexcept {
 }
 
 void game::Game::drawWindow() noexcept {
-    for(int i = 0; i < 16; ++i){
-        for(int j = 0; j < 12; ++j){
+    for(int i = 15; i >= 0; --i){
+        for(int j = 11; j >= 0; --j){
             _block.draw(_window, _map.getBuffer()[i][j], i, j);
         }
     }
@@ -76,13 +76,11 @@ void game::Game::eventDispatcher() noexcept {
                     }
 
                     case sf::Keyboard::Key::Up: {
-                        _hero.increaseHp(30);
                         _hero.changeMovementVec(0, game::movement::up);
                         break;
                     }
 
                     case sf::Keyboard::Key::Down: {
-                        _hero.decreaseHp(30);
                         _hero.changeMovementVec(0, game::movement::down);
                         break;
                     }
