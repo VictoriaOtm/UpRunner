@@ -60,7 +60,7 @@ namespace game {
         const uint16_t _tileHeight = 64;
         const uint16_t _tileWidth = 64;
 
-        float _speed = 0;
+        float _speed = 0.5f;
 
     };
 }

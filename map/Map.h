@@ -17,7 +17,8 @@ namespace game {
         ladder,
         quicksand,
         collapsingFloor,
-        collFloor
+        collFloor,
+        coin
     };
 
     class Map {
