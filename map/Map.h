@@ -8,11 +8,12 @@
 
 #include <vector>
 #include <boost/circular_buffer.hpp>
+#include <random>
 
 namespace game {
     enum blockType{
         empty,
-        staticFloor, //game::blockType::empty
+        staticFloor,
         ladder,
         quicksand,
         collapsingFloor,
@@ -37,6 +38,12 @@ namespace game {
 
         uint16_t _height;
         uint16_t _width;
+
+        std::random_device rd;
+        std::mt19937 gen;
+        std::uniform_int_distribution<> dis0_10;
+        std::uniform_int_distribution<> dis1_3;
+        std::uniform_int_distribution<> dis2_6;
     };
 
 }

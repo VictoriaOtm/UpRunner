@@ -5,7 +5,7 @@
 #include <math.h>
 #include "heroView.h"
 
-game::heroView::heroView() throw(game::error::textureNotFound): _isFalling(true), _isLadder(false) {
+game::heroView::heroView() throw(game::error::textureNotFound):_gameOver(false), _isFalling(true), _isLadder(false) {
     if (_texture.loadFromFile("./textures/heroTS1.png")) {
         parseTexture();
     } else {
@@ -20,14 +20,14 @@ void game::heroView::update(int time, const boost::circular_buffer<std::vector<B
 
     switch (_movementVector.x) {
         case game::movement::left: {
-            if (!_collision.left){
+            if (!_collision.left) {
                 alterX(_xSpeed * time * game::movement::left / _speedFactor);
             }
             break;
         }
 
         case game::movement::right: {
-            if (!_collision.right){
+            if (!_collision.right) {
                 alterX(_xSpeed * time * game::movement::right / _speedFactor);
             }
             break;
@@ -190,11 +190,18 @@ void game::heroView::resolveCollision(const uint8_t collisionFrom, const Block &
         }
 
         case game::collision::colDownLeft: {
-
+            if (_position.x <= blockBounds.left + 42 && collidedBlock.blockType != game::blockType::quicksand) {
+                _collision.down = true;
+                _position.y = blockBounds.top - _tileYSize;
+            }
             break;
         }
 
         case game::collision::colDownRight: {
+            if (_position.x + _tileXSize >= blockBounds.left + 43 && collidedBlock.blockType != game::blockType::quicksand) {
+                _collision.down = true;
+                _position.y = blockBounds.top - _tileYSize;
+            }
             break;
         }
 
@@ -210,7 +217,24 @@ void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &c
             if (collisionFrom == game::collision::colDown ||
                 collisionFrom == game::collision::colDownRight ||
                 collisionFrom == game::collision::colDownLeft) {
+                if (_hp == 0){
+                    decreaseLifes();
+                    if (getLifes() == 0){
+                        _gameOver = true;
+                    }
+                    increaseHp(_hpMax);
+                }
                 decreaseHp(1);
+            }
+            break;
+        }
+
+        case game::blockType::collapsingFloor :
+        case game::blockType::collFloor :{
+            Block& sb = const_cast<Block&>(collidedBlock);
+            sb.breakBlock();
+            if (collisionFrom == game::collision::colDown){
+                jump();
             }
             break;
         }
@@ -230,11 +254,14 @@ void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::
 
     if (heroNextRect.top >= 960) {
         decreaseHp(_hpMax);
+        decreaseLifes();
+        decreaseLifes();
+        _gameOver = true;
     } else {
         uint8_t collisionFrom = 0;
 
-        for (int i = yPos; i < yPos + 3; i++) {
-            for (int j = xPos; j < xPos + 3; j++) {
+        for (int i = yPos; i < (yPos + 3 >= 18 ? 18 : yPos + 3); i++) {
+            for (int j = xPos; j < (xPos + 3 >= 13 ? 13 : xPos + 3); j++) {
                 if (heroNextRect.intersects(_blocks[i][j].blockSprite.getGlobalBounds()) &&
                     _blocks[i][j].blockType != game::blockType::empty) {
                     resolveCollision(collisionFrom, _blocks[i][j]);

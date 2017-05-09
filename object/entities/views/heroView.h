@@ -46,6 +46,8 @@ namespace game {
 
         void changeMovementVec(const int xRotation, const int yRotation);
 
+        bool _gameOver;
+
     private:
         void parseTexture();
 
@@ -80,6 +82,7 @@ namespace game {
 
         bool _isFalling;
         bool _isLadder;
+
 
     };
 }

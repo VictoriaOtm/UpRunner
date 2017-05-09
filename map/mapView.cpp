@@ -6,7 +6,7 @@
 
 game::mapView::mapView(sf::RenderWindow &window) : _window(window), blocks(18) {
     if (_blocksTexture.loadFromFile("./textures/blocksTS.png")) {
-        blocks.resize(18);
+        blocks.resize(_map.size());
         long currRow = 0;
 
         for (long i = _map.size() - 1; i >= 0; i--) {
@@ -26,7 +26,23 @@ game::mapView::mapView(sf::RenderWindow &window) : _window(window), blocks(18) {
 game::mapView::mapView(const game::mapView &rhs) : Map(rhs), _window(rhs._window) {}
 
 void game::mapView::update() {
-
+    for (auto &i : blocks){
+        for (auto &j : i){
+            j.blockSprite.move(0, _speed);
+        }
+    }
+    if (blocks[blocks.size() - 1][0].blockSprite.getPosition().y > 960){
+        generate();
+        blocks.pop_back();
+        blocks.push_front(std::vector<Block>(_width));
+        for (int i = 0; i < _width; i++){
+            blocks[0][i].blockType = _map[_map.size() - 1][i];
+            blocks[0][i].blockSprite.setTexture(_blocksTexture);
+            blocks[0][i].blockSprite.setTextureRect(sf::IntRect(blocks[0][i].blockType * 128, 0, 128, 128));
+            blocks[0][i].blockSprite.setScale(sf::Vector2f(0.5f, 0.5f));
+            blocks[0][i].blockSprite.setPosition(i * 64, (0) * 64);
+        }
+    }
 }
 
 void game::mapView::draw() {

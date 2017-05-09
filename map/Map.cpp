@@ -7,18 +7,12 @@
 #include <ctime>
 #include <iostream>
 
-game::Map::Map() : _map(18), curLine(1), _height(16), _width(12), _mapUpdated(false) {
+game::Map::Map() : _map(30), curLine(1), _height(16), _width(12), _mapUpdated(false), gen(rd()), dis0_10(0, 10),
+                   dis1_3(1, 3), dis2_6(2, 6) {
     _map.resize(18);
-    _map[17].resize(_width, game::blockType::staticFloor);
-    _map[16].resize(_width, game::blockType::staticFloor);
-    _map[15].resize(_width, game::blockType::empty);
-    _map[14].resize(_width, game::blockType::empty);
-    _map[13].resize(_width, game::blockType::staticFloor);
-    _map[13][3] = _map[13][4] = game::blockType::empty;
+    _map[_map.size()-1].resize(_width, game::blockType::staticFloor);
 
-    _map[17][0] = _map[16][0] = game::blockType::ladder;
-
-    for (size_t i = 0; i < 13; i++) {
+    for (size_t i = 0; i < _map.size()-1; i++) {
         generate();
     }
     _mapUpdated = false;
@@ -32,51 +26,66 @@ void game::Map::generate() {
     _mapUpdated = true;
     _map.pop_front();
 
-    std::vector<uint8_t> new_vector(12, game::blockType::empty);
-    srand(time(0));
 
-    if (_map[_map.size() - 1][0] == game::blockType::ladder) {
-        if (_map[_map.size() - 1][1] == game::blockType::staticFloor) {
-            new_vector[_width - 1] = game::blockType::empty;
-            new_vector[0] = game::blockType::empty;
+    std::vector<uint8_t> new_vector;
 
-            int destroy = (rand() % 11) + 1;
-            new_vector[destroy] = game::blockType::collapsingFloor;
+    switch (curLine % 5) {
+        case 0: {
+            new_vector.resize(_width, game::blockType::staticFloor);
 
-            int sand = (rand() % 11) + 1;
-            new_vector[sand] = game::blockType::quicksand;
-
-            _map.push_back(new_vector);
-        } else if (_map[_map.size() - 1][1] == game::blockType::empty) {
-            if (_map[_map.size() - 2][1] == game::blockType::empty &&
-                _map[_map.size() - 2][1] == game::blockType::empty &&
-                _map[_map.size() - 3][1] == game::blockType::empty) {
-
-                new_vector[_width - 1] = game::blockType::staticFloor;
-
-                new_vector[0] = game::blockType::ladder;
-
-                int destroy = (rand() % 11) + 1;
-                new_vector[destroy] = game::blockType::collapsingFloor;
-
-                int sand = (rand() % 11);
-                new_vector[sand] = game::blockType::quicksand;
-
-                _map.push_back(new_vector);
-            } else {
-                new_vector[0] = game::blockType::ladder;
-
-                int destroy = (rand() % 11) + 1;
-                new_vector[destroy] = game::blockType::collapsingFloor;
-
-                _map.push_back(new_vector);
+            for (int i = 0; i < dis1_3(gen); i++) {
+                int space = dis0_10(gen);
+                int amount = dis2_6(gen);
+                for (int j = space; j < space + amount; j++)
+                    new_vector[j] = game::blockType::empty;
             }
-        } else {
-            _map.push_back(std::vector<uint8_t>(_width, game::blockType::empty));
+            break;
+        }
+        case 1: {
+
+
+            break;
+        }
+        case 2: {
+            new_vector.resize(_width, game::blockType::empty);
+            for (int i = 0; i < dis1_3(gen); i++) {
+                int space = dis0_10(gen);
+                int amount = dis1_3(gen);
+                for (int j = space; j < space + amount; j++) {
+                    if (dis0_10(gen) == 0) {
+                        new_vector[j] = game::blockType::quicksand;
+                    } else{
+                        new_vector[j] = game::blockType::collapsingFloor;
+                    }
+                }
+            }
+            break;
+        }
+        case 3: {
+            break;
+        }
+        case 4:{
+            new_vector.resize(_width, game::blockType::empty);
+            for (int i = 0; i < dis1_3(gen); i++) {
+                int space = dis0_10(gen);
+                int amount = dis1_3(gen);
+                for (int j = space; j < space + amount; j++)
+                    new_vector[j] = game::blockType::staticFloor;
+            }
+            break;
         }
 
-    } else {
-        _map.push_back(std::vector<uint8_t>(_width, game::blockType::empty));
-    }
-}
+        case 5:{
+            break;
+        }
 
+        default: {
+            break;
+        }
+    }
+    if (new_vector.empty()) {
+        new_vector.resize(_width, game::blockType::empty);
+    }
+    _map.push_back(new_vector);
+    curLine++;
+}

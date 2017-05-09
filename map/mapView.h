@@ -13,6 +13,26 @@
 struct Block{
     sf::Sprite blockSprite;
     uint8_t blockType;
+
+    void breakBlock(){
+        switch (blockType){
+            case game::blockType::collapsingFloor : {
+                blockType = game::blockType::collFloor;
+                blockSprite.setTextureRect(sf::IntRect(game::blockType::collFloor, 0, 128, 128));
+                break;
+            }
+
+            case game::blockType::collFloor: {
+                blockType = game::blockType::empty;
+                blockSprite.setTextureRect(sf::IntRect(game::blockType::empty, 0, 128, 128));
+                break;
+            }
+
+            default:{
+                break;
+            }
+        }
+    }
 };
 
 namespace game {
@@ -39,6 +59,9 @@ namespace game {
 
         const uint16_t _tileHeight = 64;
         const uint16_t _tileWidth = 64;
+
+        float _speed = 0;
+
     };
 }
 

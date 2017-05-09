@@ -7,24 +7,34 @@
 
 game::Game::Game() :
         _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()), _map(_window),
-        _menu(_window, _config), _background(153, 210, 215) {
+        _newGameMenu(_window, _config), _background(153, 210, 215) {
     _window.setKeyRepeatEnabled(false);
     _window.setFramerateLimit(_config.getMenuFPSLimit());
     _window.setVerticalSyncEnabled(_config.getVSync());
 }
 
-void game::Game::run() throw(std::runtime_error) {
-    _window.clear(_background);
-    _menu.run();
 
+void game::Game::run() throw(std::runtime_error) {
     sf::Clock clock;
     sf::Time elapsed;
+    _window.clear(_background);
 
     while (_window.isOpen()) {
-        eventDispatcher();
-        elapsed = clock.restart();
-        updateWindow();
-        updateGame(elapsed.asMilliseconds());
+        if (_isGame) {
+            if (!_hero._gameOver) {
+                elapsed = clock.restart();
+                updateWindow();
+                updateGame(elapsed.asMilliseconds());
+            } else {
+                _window.clear(_background);
+                _newGameMenu.drawGO();
+            }
+            eventDispatcher();
+        } else if (_isMenu) {
+            _newGameMenu.runNew();
+            _isMenu = false;
+            _isGame = true;
+        }
     }
 
 }
@@ -54,72 +64,76 @@ void game::Game::eventDispatcher() noexcept {
             }
 
             case sf::Event::KeyPressed: {
-                switch (event.key.code) {
-                    case sf::Keyboard::Key::Left: {
-                        _hero.changeMovementVec(game::movement::left, 0);
-                        break;
-                    }
+                if (!_hero._gameOver) {
+                    switch (event.key.code) {
+                        case sf::Keyboard::Key::Left: {
+                            _hero.changeMovementVec(game::movement::left, 0);
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Right: {
-                        _hero.changeMovementVec(game::movement::right, 0);
-                        break;
-                    }
+                        case sf::Keyboard::Key::Right: {
+                            _hero.changeMovementVec(game::movement::right, 0);
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Up: {
-                        _hero.changeMovementVec(0, game::movement::up);
-                        break;
-                    }
+                        case sf::Keyboard::Key::Up: {
+                            _hero.changeMovementVec(0, game::movement::up);
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Down: {
-                        _hero.changeMovementVec(0, game::movement::down);
-                        break;
-                    }
+                        case sf::Keyboard::Key::Down: {
+                            _hero.changeMovementVec(0, game::movement::down);
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Space: {
-                        _hero.jump();
-                        break;
-                    }
+                        case sf::Keyboard::Key::Space: {
+                            _hero.jump();
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Escape: {
-                        _menu.run();
-                        break;
-                    }
+                        case sf::Keyboard::Key::Escape: {
+                            _newGameMenu.runContinue(_isGame);
+                            break;
+                        }
 
-                    default: {
-                        break;
+                        default: {
+                            break;
+                        }
                     }
                 }
                 break;
             }
 
             case sf::Event::KeyReleased: {
-                switch (event.key.code) {
-                    case sf::Keyboard::Key::Left: {
-                        _hero.changeMovementVec(game::movement::right, 0);
-                        break;
-                    }
+                if (!_hero._gameOver){
+                    switch (event.key.code) {
+                        case sf::Keyboard::Key::Left: {
+                            _hero.changeMovementVec(game::movement::right, 0);
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Right: {
-                        _hero.changeMovementVec(game::movement::left, 0);
-                        break;
-                    }
+                        case sf::Keyboard::Key::Right: {
+                            _hero.changeMovementVec(game::movement::left, 0);
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Up: {
-                        _hero.changeMovementVec(0, game::movement::down);
-                        break;
-                    }
+                        case sf::Keyboard::Key::Up: {
+                            _hero.changeMovementVec(0, game::movement::down);
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Down: {
-                        _hero.changeMovementVec(0, game::movement::up);
-                        break;
-                    }
+                        case sf::Keyboard::Key::Down: {
+                            _hero.changeMovementVec(0, game::movement::up);
+                            break;
+                        }
 
-                    case sf::Keyboard::Key::Space: {
-                        break;
-                    }
+                        case sf::Keyboard::Key::Space: {
+                            break;
+                        }
 
-                    default: {
-                        break;
+                        default: {
+                            break;
+                        }
                     }
                 }
                 break;
@@ -133,9 +147,9 @@ void game::Game::eventDispatcher() noexcept {
 }
 
 void game::Game::updateGame(int time) noexcept {
+    _map.update();
     _hero.update(time, _map.blocks);
     _gui.update(_hero);
-    _map.update();
     return;
 }
 

@@ -16,7 +16,7 @@ namespace game {
     }
 
     entity::entity() : _hp(250),
-                       _xSpeed(12),
+                       _xSpeed(20),
                        _ySpeed(0),
                        _jumpsDone(0){}
 

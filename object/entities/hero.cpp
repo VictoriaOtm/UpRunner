@@ -24,7 +24,9 @@ namespace game {
     }
 
     void hero::decreaseLifes() {
-        --_lifes;
+        if (_lifes > 0){
+            --_lifes;
+        }
     }
 
     void hero::increaseLifes() {

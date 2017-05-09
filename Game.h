@@ -10,7 +10,7 @@
 #include "object/entities/views/heroView.h"
 #include "object/block/blockView/blockView.h"
 #include "interface/gui/gui.h"
-#include "interface/menu/menu.h"
+#include "interface/menu/newGameMenu.h"
 #include "map/Map.h"
 #include "map/mapView.h"
 
@@ -34,9 +34,13 @@ namespace game {
 
         gui _gui;
 
-        menu _menu;
+        game::menu::newGameMenu _newGameMenu;
 
         sf::Color _background;
+
+        bool _isGame = false;
+
+        bool _isMenu = true;
 
         void updateWindow() noexcept;
 
