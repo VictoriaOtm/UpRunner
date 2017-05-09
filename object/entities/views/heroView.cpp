@@ -182,10 +182,12 @@ void game::heroView::resolveCollision(const uint8_t collisionFrom, const Block &
         }
 
         case game::collision::colUpLeft : {
+            _collision.left = true;
             break;
         }
 
         case game::collision::colUpRight: {
+            _collision.right = true;
             break;
         }
 
@@ -232,8 +234,8 @@ void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &c
         case game::blockType::collapsingFloor :
         case game::blockType::collFloor :{
             Block& sb = const_cast<Block&>(collidedBlock);
-            sb.breakBlock();
-            if (collisionFrom == game::collision::colDown){
+            if (collisionFrom == game::collision::colDown || collisionFrom == game::collision::colUp){
+                sb.breakBlock();
                 jump();
             }
             break;
