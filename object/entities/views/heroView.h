@@ -40,7 +40,7 @@ namespace game {
     public:
         heroView(sf::RenderWindow &window) throw(game::error::textureNotFound);
 
-        void update(int time, const boost::circular_buffer<std::vector<Block>>& _blocks);
+        void update(int time, const game::mapView& map);
 
         void draw();
 
@@ -48,23 +48,25 @@ namespace game {
 
         bool _gameOver;
 
+        void setHeroToPoint(const sf::Vector2f point);
+
     private:
         void parseTexture();
 
-        void collisionCheck(int time, const boost::circular_buffer<std::vector<Block>>& _blocks);
+        void collisionCheck(int time, const game::mapView& Map);
 
         sf::FloatRect getNextFrame(int time);
 
-        void resolveCollision(const uint8_t collisionFrom, const Block& collidedBlock);
+        void resolveCollision(const uint8_t collisionFrom, const Block &collidedBlock);
 
-        void affectCollision(const uint8_t collisionFrom, const Block& collidedBlock);
+        void affectCollision(const uint8_t collisionFrom, const Block &collidedBlock);
 
         void alterMovementVec();
 
         void gravityFall(int time);
 
-        const int _tileXSize = 94;
-        const int _tileYSize = 104;
+        float _tileXSize = 94;
+        float _tileYSize = 104;
 
         sf::Texture _texture;
 
@@ -80,14 +82,14 @@ namespace game {
 
         float _curFrame = 0;
 
-        float _speedOnMap = 0;
+        float _speedOnMap = 0.5f;
 
         const double _speedFactor = 50;
 
         bool _isFalling;
         bool _isLadder;
 
-
+        bool checkBounds(sf::FloatRect &heroNextRect);
     };
 }
 

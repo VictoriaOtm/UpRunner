@@ -18,12 +18,14 @@ struct Block{
         switch (blockType){
             case game::blockType::collapsingFloor : {
                 blockType = game::blockType::collFloor;
-                blockSprite.setTextureRect(sf::IntRect(game::blockType::collFloor, 0, 128, 128));
+
+                blockSprite.setTextureRect(sf::IntRect(game::blockType::collFloor * 128 , 0, 128, 128));
                 break;
             }
 
             case game::blockType::collFloor: {
                 blockType = game::blockType::empty;
+
                 blockSprite.setTextureRect(sf::IntRect(game::blockType::empty, 0, 128, 128));
                 break;
             }
@@ -55,9 +57,11 @@ namespace game {
 
         void update();
 
-        const uint16_t tileHeight() const;
+        const float tileHeight() const;
 
-        const uint16_t tileWidth() const;
+        const float tileWidth() const;
+
+        sf::Vector2f startingPoint();
 
         boost::circular_buffer<std::vector<Block>> blocks;
     private:
@@ -66,10 +70,10 @@ namespace game {
 
         sf::Texture _coinTexture;
 
-        const uint16_t _tileHeight = 64;
-        const uint16_t _tileWidth = 64;
+        float _tileHeight = 128;
+        float _tileWidth = 128;
 
-        float _speed = 0;
+        float _speed = 0.5f;
 
     };
 }

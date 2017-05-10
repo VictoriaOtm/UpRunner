@@ -4,8 +4,7 @@
 
 #include "gui.h"
 
-game::gui::gui()
-{
+game::gui::gui(sf::RenderWindow &window) : window(window) {
     if (_hpFillT.loadFromFile("./textures/hpFill.png")
         && _hpFrameT.loadFromFile("./textures/hpFrame.png")
         && _lifeT.loadFromFile("./textures/lifeIcon.png")
@@ -18,7 +17,7 @@ game::gui::gui()
 
     } else throw game::error::textureNotFound("Texture not found");
 
-    if (_font.loadFromFile("./interface/a_Alterna.ttf")){
+    if (_font.loadFromFile("./interface/a_Alterna.ttf")) {
         _lifesNum.setFont(_font);
         _coinsNum.setFont(_font);
 
@@ -28,12 +27,11 @@ game::gui::gui()
         _lifesNum.setColor(sf::Color::White);
         _coinsNum.setColor(sf::Color::White);
 
-    }
-    else throw game::error::fontNotFound("Font not found");
+    } else throw game::error::fontNotFound("Font not found");
 
 }
 
-void game::gui::draw(sf::RenderWindow &window) {
+void game::gui::draw() {
     window.draw(_hpFill);
     window.draw(_hpFrame);
 
@@ -44,17 +42,19 @@ void game::gui::draw(sf::RenderWindow &window) {
     window.draw(_coinsNum);
 }
 
-void game::gui::update(const hero& _hero) {
+void game::gui::update(const hero &_hero) {
+    sf::Vector2f position =
+            window.getView().getCenter() - sf::Vector2f(window.getView().getSize().x / 2, window.getView().getSize().y / 2);
     _hpFill.setTextureRect(sf::Rect<int>(0, 0, _hero.getHp(), 50));
 
-    _hpFill.setPosition(25, 25);
-    _hpFrame.setPosition(25, 25);
+    _hpFill.setPosition(position + sf::Vector2f(25, 25));
+    _hpFrame.setPosition(position + sf::Vector2f(25, 25));
 
-    _life.setPosition(25, 95);
-    _coin.setPosition(150, 95);
+    _life.setPosition(position + sf::Vector2f(25, 95));
+    _coin.setPosition(position + sf::Vector2f(150, 95));
 
-    _lifesNum.setPosition(92, 95);
-    _coinsNum.setPosition(217, 95);
+    _lifesNum.setPosition(position + sf::Vector2f(92, 95));
+    _coinsNum.setPosition(position + sf::Vector2f(217, 95));
 
     _lifesNum.setString(std::to_string(_hero.getLifes()));
     _coinsNum.setString(std::to_string(_hero.getCoins()));

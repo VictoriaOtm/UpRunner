@@ -5,19 +5,22 @@
 #include <math.h>
 #include "heroView.h"
 
-game::heroView::heroView(sf::RenderWindow& window) throw(game::error::textureNotFound): _gameOver(false), _window(window),_isFalling(true), _isLadder(false) {
+game::heroView::heroView(sf::RenderWindow &window) throw(game::error::textureNotFound): _gameOver(false),
+                                                                                        _window(window),
+                                                                                        _isFalling(true),
+                                                                                        _isLadder(false) {
     if (_texture.loadFromFile("./textures/heroTS1.png")) {
         parseTexture();
+
     } else {
         throw game::error::textureNotFound("Texture not found");
     }
 }
 
-void game::heroView::update(int time, const boost::circular_buffer<std::vector<Block>> &_block) {
-    _curSprite->move(0, _speedOnMap);
+void game::heroView::update(int time, const game::mapView& map) {
+    _position.y += _speedOnMap;
 
-    collisionCheck(time, _block);
-    //alterMovementVec();
+    collisionCheck(time, map);
     gravityFall(time);
 
     switch (_movementVector.x) {
@@ -111,6 +114,9 @@ void game::heroView::draw() {
 }
 
 void game::heroView::parseTexture() {
+    float scaleParameterH = static_cast<float>(_window.getSize().y) / 960.f;
+    float scaleParameterW = static_cast<float>(_window.getSize().x) / 768.f;
+
     _sprites.resize(3);
 
     for (int row = 0; row < 3; row++) {
@@ -118,8 +124,12 @@ void game::heroView::parseTexture() {
 
         for (int col = 0; col < 3; col++) {
             _sprites[row][col].setTextureRect(sf::IntRect(col * _tileXSize, row * _tileYSize, _tileXSize, _tileYSize));
+            _sprites[row][col].setScale(scaleParameterW, scaleParameterH);
         }
     }
+
+    _tileXSize *= scaleParameterW;
+    _tileYSize *= scaleParameterH;
 
     _curSprite = &_sprites[game::heroSpritesFacing::Right][0];
 }
@@ -263,36 +273,80 @@ void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &c
 
 }
 
-void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::vector<Block>> &_blocks) {
-    sf::FloatRect heroNextRect = getNextFrame(time);
-
-    uint16_t xPos = static_cast<uint16_t >(heroNextRect.left / 64);
-    uint16_t yPos = static_cast<uint16_t >(heroNextRect.top / 64 + 3);
-
-    if (heroNextRect.top >= _window.getSize().y) {
+bool game::heroView::checkBounds(sf::FloatRect &heroNextRect) {
+    if (heroNextRect.top >= _window.getSize().y / 2 + _window.getView().getCenter().y) {
         decreaseHp(_hpMax);
         decreaseLifes();
         decreaseLifes();
         _gameOver = true;
-    } else {
+        return false;
+    }
+
+    if(heroNextRect.left <= _window.getView().getCenter().x - _window.getView().getSize().x / 2){
+        _position.x = _window.getView().getCenter().x - _window.getView().getSize().x / 2;
+    }
+
+    if(heroNextRect.left + _tileXSize >= _window.getView().getCenter().x + _window.getView().getSize().x / 2){
+        _position.x = _window.getView().getCenter().x - _window.getView().getSize().x / 2 - _tileXSize;
+    }
+
+//    return false;
+    return true;
+}
+
+void game::heroView::collisionCheck(int time, const game::mapView &map) {
+    sf::FloatRect heroNextRect = getNextFrame(time);
+
+    if (checkBounds(heroNextRect)) {
+
+        uint16_t yPos = 0;
+        while(heroNextRect.top > map.blocks[yPos][0].blockSprite.getPosition().y){
+            yPos++;
+            if(yPos == map.blocks.size()){
+                break;
+            }
+        }
+        yPos--;
+
+        uint16_t xPos = 0;
+        while (heroNextRect.left > map.blocks[yPos][xPos].blockSprite.getPosition().x){
+            xPos++;
+            if(xPos == map.blocks.size()){
+                break;
+            }
+        }
+        xPos--;
+
+        uint16_t yPosLimit =
+                yPos + 3 >= map.blocks.size() ?
+                static_cast<uint16_t >(map.blocks.size()) :
+                static_cast<uint16_t >(yPos + 3);
+
+        uint16_t xPosLimit =
+                xPos + 3 >= map.blocks[0].size() ?
+                static_cast<uint16_t >(map.blocks[0].size()) :
+                static_cast<uint16_t >(xPos + 3);
+
         uint8_t collisionFrom = 0;
 
-        for (int i = yPos; i < (yPos + 3 >= 18 ? 18 : yPos + 3); i++) {
-            for (int j = xPos; j < (xPos + 3 >= 13 ? 13 : xPos + 3); j++) {
-                if (heroNextRect.intersects(_blocks[i][j].blockSprite.getGlobalBounds()) &&
-                    _blocks[i][j].blockType != game::blockType::empty) {
+        for (int i = yPos; i < yPosLimit; i++) {
+            for (int j = xPos; j < xPosLimit; j++) {
+                if (heroNextRect.intersects(map.blocks[i][j].blockSprite.getGlobalBounds()) &&
+                        map.blocks[i][j].blockType != game::blockType::empty) {
 
-                    if (_blocks[i][j].blockType != game::blockType::coin){
-                        resolveCollision(collisionFrom, _blocks[i][j]);
+                    if (map.blocks[i][j].blockType != game::blockType::coin) {
+                        resolveCollision(collisionFrom, map.blocks[i][j]);
                     }
 
-                    affectCollision(collisionFrom, _blocks[i][j]);
+                    affectCollision(collisionFrom, map.blocks[i][j]);
                 }
                 ++collisionFrom;
             }
         }
     }
+
 }
+
 
 void game::heroView::alterMovementVec() {
     if ((_movementVector.x == game::movement::right && _collision.right) ||
@@ -318,6 +372,11 @@ void game::heroView::gravityFall(int time) {
             _jumpsDone = 0;
         }
     }
+}
+
+void game::heroView::setHeroToPoint(const sf::Vector2f point) {
+    _position.x = point.x;
+    _position.y = point.y - _tileYSize - 1;
 }
 
 

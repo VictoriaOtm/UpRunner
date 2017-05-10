@@ -22,7 +22,7 @@ namespace game {
 
     void entity::jump() {
 //        нельзя прыгнуть больше 2 раз.
-        if (_jumpsDone <= 1){
+        if (_jumpsDone <= 2){
             _ySpeed = -_ySpeedMax;
             ++_jumpsDone;
         }

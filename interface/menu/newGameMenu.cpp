@@ -10,6 +10,8 @@
 game::menu::newGameMenu::newGameMenu(sf::RenderWindow &window, config &cfg) throw(game::error::textureNotFound)
         : _window(window), _height(cfg.getVideoMode().height), _width(cfg.getVideoMode().width),
           _choice(0), _menu(true), _conMenu(false) {
+
+
     if (_backgroundT.loadFromFile("./textures/menu.png")
         && _newGameT.loadFromFile("./textures/newGame.png")
         && _quitT.loadFromFile("./textures/quit.png")
@@ -30,7 +32,7 @@ game::menu::newGameMenu::newGameMenu(sf::RenderWindow &window, config &cfg) thro
 }
 
 void game::menu::newGameMenu::drawGO() {
-    _gameOver.setPosition(_width / 4, 406);
+    _gameOver.setPosition(_position + sf::Vector2f(_width / 4, 406));
     _window.draw(_gameOver);
     _window.display();
 }
@@ -51,18 +53,23 @@ void game::menu::newGameMenu::drawMenu() {
 void game::menu::newGameMenu::updateMenu() {
     uint16_t strHeight = 173;
 
-    _backgroundS.setPosition(_width / 4, _height / 4);
-    _newGame.setPosition(_width / 4 + 100, _height / 4 + 128);
+    sf::Vector2f menuPos = _position + sf::Vector2f(_width / 4, _height / 4);
+
+    _backgroundS.setPosition(menuPos);
+    _newGame.setPosition(menuPos + sf::Vector2f(100, 128));
     if (_conMenu) {
-        _continue.setPosition(_width / 4 + 100, _height / 4 + strHeight);
+        _continue.setPosition(menuPos + sf::Vector2f(100, strHeight));
         strHeight += 45;
     }
-    _settings.setPosition(_width / 4 + 100, _height / 4 + strHeight);
+    _settings.setPosition(menuPos + sf::Vector2f(100, strHeight));
     strHeight += 45;
-    _quit.setPosition(_width / 4 + 100, _height / 4 + strHeight);
+    _quit.setPosition(menuPos + sf::Vector2f(100, strHeight));
 }
 
 void game::menu::newGameMenu::runNew() {
+    _position =
+            _window.getView().getCenter() -
+            sf::Vector2f(_window.getView().getSize().x / 2, _window.getView().getSize().y / 2);
     _menu = true;
     while (_menu) {
         updateMenu();
@@ -113,17 +120,17 @@ void game::menu::newGameMenu::eventDispatcher() {
 
             case sf::Event::MouseMoved : {
 
-                if (_newGame.getGlobalBounds().contains(sf::Mouse::getPosition(_window).x,
-                                                        sf::Mouse::getPosition(_window).y)) {
+                if (_newGame.getGlobalBounds().contains(_position + sf::Vector2f(sf::Mouse::getPosition(_window).x,
+                                                                                 sf::Mouse::getPosition(_window).y))) {
                     _choice = game::menu::choice::newGame;
-                } else if (_quit.getGlobalBounds().contains(sf::Mouse::getPosition(_window).x,
-                                                            sf::Mouse::getPosition(_window).y)) {
+                } else if (_quit.getGlobalBounds().contains(_position + sf::Vector2f(sf::Mouse::getPosition(_window).x,
+                                                            sf::Mouse::getPosition(_window).y))) {
                     _choice = game::menu::choice::quit;
-                } else if (_settings.getGlobalBounds().contains(sf::Mouse::getPosition(_window).x,
-                                                                sf::Mouse::getPosition(_window).y)) {
+                } else if (_settings.getGlobalBounds().contains(_position + sf::Vector2f(sf::Mouse::getPosition(_window).x,
+                                                                sf::Mouse::getPosition(_window).y))) {
                     _choice = game::menu::choice::settings;
-                } else if (_continue.getGlobalBounds().contains(sf::Mouse::getPosition(_window).x,
-                                                                sf::Mouse::getPosition(_window).y)) {
+                } else if (_continue.getGlobalBounds().contains(_position + sf::Vector2f(sf::Mouse::getPosition(_window).x,
+                                                                sf::Mouse::getPosition(_window).y))) {
                     _choice = game::menu::choice::continueGame;
                 } else {
                     _choice = game::menu::choice::none;

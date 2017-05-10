@@ -10,11 +10,13 @@
 game::Map::Map() : _map(), curLine(2), _height(16), _width(12), _mapUpdated(false), gen(rd()), dis0_10(0, 10),
                    dis1_3(1, 3), dis2_6(2, 6), dis4_6(4, 6), dis0_100(0, 100) {
     _map.resize(18);
-    _map[_map.size() - 1].resize(_width, game::blockType::staticFloor);
+    _map[_map.size() - 3].resize(_width, game::blockType::staticFloor);
     _map[_map.size() - 2].resize(_width, game::blockType::staticFloor);
+    _map[_map.size() - 1].resize(_width, game::blockType::empty);
+    _map[_map.size() - 1][4] = _map[_map.size() - 1][5] = _map[_map.size() - 1][6] = game::blockType ::staticFloor;
 
 
-    for (size_t i = 0; i < _map.size() - 2; i++) {
+    for (size_t i = 0; i < _map.size() - 3; i++) {
         generate();
     }
     _mapUpdated = false;
@@ -27,7 +29,6 @@ game::Map::Map(const game::Map &rhs) {
 void game::Map::generate() {
     _mapUpdated = true;
     _map.pop_front();
-
 
     std::vector<uint8_t> newLine;
 
@@ -175,16 +176,17 @@ void game::Map::generate() {
                 ladderPos = static_cast<uint8_t >(dis0_10(gen) + dis0_10(gen) / 5);
                 newLine[ladderPos] = game::blockType::ladder;
             }
+            break;
         }
         case 3: {
-            newLine.resize(_width,game::blockType::empty);
+            newLine.resize(_width, game::blockType::empty);
             if (ladderIsBuilding) {
                 newLine[ladderPos] = game::blockType::ladder;
             }
             break;
         }
         case 4: {
-            newLine.resize(_width,game::blockType::empty);
+            newLine.resize(_width, game::blockType::empty);
             if (ladderIsBuilding) {
                 newLine[ladderPos] = game::blockType::ladder;
             }
@@ -192,7 +194,7 @@ void game::Map::generate() {
         }
 
         case 5: {
-            newLine.resize(_width,game::blockType::empty);
+            newLine.resize(_width, game::blockType::empty);
             if (ladderIsBuilding) {
                 newLine[ladderPos] = game::blockType::ladder;
             }

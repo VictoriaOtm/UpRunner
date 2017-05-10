@@ -42,6 +42,8 @@ namespace game {
         private:
             sf::RenderWindow &_window;
 
+            sf::Vector2f _position;
+
             unsigned int _height;
             unsigned int _width;
 

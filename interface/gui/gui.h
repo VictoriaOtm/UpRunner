@@ -12,13 +12,15 @@
 namespace game{
     class gui {
     public:
-        gui();
+        gui(sf::RenderWindow &window);
 
-        void draw(sf::RenderWindow &window);
+        void draw();
 
         void update(const hero& _hero);
 
     private:
+        sf::RenderWindow &window;
+
         sf::Texture _hpFillT;
         sf::Texture _hpFrameT;
         sf::Texture _coinT;

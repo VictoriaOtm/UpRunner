@@ -53,7 +53,7 @@ namespace game {
         std::uniform_int_distribution<> dis0_100;
 
         uint8_t curLogicBlockSize = 4;
-        uint8_t curLogicBlockLine = 1;
+        uint8_t curLogicBlockLine = 2;
     };
 
 }

@@ -28,13 +28,13 @@ namespace game {
 
         sf::RenderWindow _window;
 
-        sf::View _camera;
+        mapView _map;
 
         heroView _hero;
 
-        mapView _map;
-
         gui _gui;
+
+        sf::View _camera;
 
         game::menu::newGameMenu _newGameMenu;
 

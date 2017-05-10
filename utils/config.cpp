@@ -8,7 +8,7 @@
 
 game::config::config() :
         _winTitle("Up Run"),
-        _videoMode(768, 960),
+        _videoMode(768, 800),
         _style(sf::Style::Default),
         _menuFPSLimit(60),
         _gameFPSLimit(240),
