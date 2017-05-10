@@ -34,10 +34,10 @@ struct Block{
         }
     }
 
-    void collect(){
+    void collectCoin(){
         if (blockType == game::blockType::coin){
             blockType = game::blockType::empty;
-            blockSprite.setTextureRect(sf::IntRect(game::blockType::empty, 0, 128, 128));
+            blockSprite.setTextureRect(sf::IntRect(game::blockType::empty, 0, 128,128));
         }
     }
 };
@@ -69,7 +69,7 @@ namespace game {
         const uint16_t _tileHeight = 64;
         const uint16_t _tileWidth = 64;
 
-        float _speed = 0.5f;
+        float _speed = 0;
 
     };
 }

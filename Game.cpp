@@ -7,11 +7,11 @@
 
 game::Game::Game() :
         _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()),
-        _camera(sf::FloatRect(0, 128, _config.getVideoMode().width, _config.getVideoMode().height)), _map(_window),
+        _camera(sf::FloatRect(0, 128, _config.getVideoMode().width, _config.getVideoMode().height)), _hero(_window), _map(_window),
         _newGameMenu(_window, _config), _background(153, 210, 215) {
 
     _camera.setSize(_config.getVideoMode().width, _config.getVideoMode().height);
-    _camera.setCenter(_config.getVideoMode().width / 2, _config.getVideoMode().height / 2);
+    _camera.setCenter(_config.getVideoMode().width / 2, (_config.getVideoMode().height + 128) / 2);
     _window.setView(_camera);
     _window.setKeyRepeatEnabled(false);
     _window.setFramerateLimit(_config.getMenuFPSLimit());
@@ -53,7 +53,7 @@ void game::Game::updateWindow() noexcept {
 
 void game::Game::drawWindow() noexcept {
     _map.draw();
-    _hero.draw(_window);
+    _hero.draw();
     _gui.draw(_window);
 }
 

@@ -38,11 +38,11 @@ namespace game {
 
     class heroView : public hero {
     public:
-        heroView() throw(game::error::textureNotFound);
+        heroView(sf::RenderWindow &window) throw(game::error::textureNotFound);
 
         void update(int time, const boost::circular_buffer<std::vector<Block>>& _blocks);
 
-        void draw(sf::RenderWindow &window);
+        void draw();
 
         void changeMovementVec(const int xRotation, const int yRotation);
 
@@ -76,9 +76,11 @@ namespace game {
 
         uint8_t _curFacing = heroSpritesFacing::Right;
 
+        sf::RenderWindow &_window;
+
         float _curFrame = 0;
 
-        float _speedOnMap = 0.5f;
+        float _speedOnMap = 0;
 
         const double _speedFactor = 50;
 

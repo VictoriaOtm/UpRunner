@@ -5,7 +5,7 @@
 #include <math.h>
 #include "heroView.h"
 
-game::heroView::heroView() throw(game::error::textureNotFound): _gameOver(false), _isFalling(true), _isLadder(false) {
+game::heroView::heroView(sf::RenderWindow& window) throw(game::error::textureNotFound): _gameOver(false), _window(window),_isFalling(true), _isLadder(false) {
     if (_texture.loadFromFile("./textures/heroTS1.png")) {
         parseTexture();
     } else {
@@ -71,7 +71,7 @@ void game::heroView::update(int time, const boost::circular_buffer<std::vector<B
 
 }
 
-void game::heroView::draw(sf::RenderWindow &window) {
+void game::heroView::draw() {
     switch (_movementVector.x) {
         case game::movement::left : {
             _curFacing = game::heroSpritesFacing::Left;
@@ -107,7 +107,7 @@ void game::heroView::draw(sf::RenderWindow &window) {
     _curSprite = &_sprites[_curFacing][_curFrame];
 
     _curSprite->setPosition(getX(), getY());
-    window.draw(*_curSprite);
+    _window.draw(*_curSprite);
 }
 
 void game::heroView::parseTexture() {
@@ -240,7 +240,7 @@ void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &c
                 || collisionFrom == game::collision::colUp
                 || collisionFrom == game::collision::colRight
                 || collisionFrom == game::collision::colLeft) {
-                sb.collect();
+                sb.collectCoin();
                 increaseCoins();
             }
             break;
@@ -269,7 +269,7 @@ void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::
     uint16_t xPos = static_cast<uint16_t >(heroNextRect.left / 64);
     uint16_t yPos = static_cast<uint16_t >(heroNextRect.top / 64 + 3);
 
-    if (heroNextRect.top >= 960) {
+    if (heroNextRect.top >= _window.getSize().y) {
         decreaseHp(_hpMax);
         decreaseLifes();
         decreaseLifes();
@@ -281,7 +281,11 @@ void game::heroView::collisionCheck(int time, const boost::circular_buffer<std::
             for (int j = xPos; j < (xPos + 3 >= 13 ? 13 : xPos + 3); j++) {
                 if (heroNextRect.intersects(_blocks[i][j].blockSprite.getGlobalBounds()) &&
                     _blocks[i][j].blockType != game::blockType::empty) {
-                    resolveCollision(collisionFrom, _blocks[i][j]);
+
+                    if (_blocks[i][j].blockType != game::blockType::coin){
+                        resolveCollision(collisionFrom, _blocks[i][j]);
+                    }
+
                     affectCollision(collisionFrom, _blocks[i][j]);
                 }
                 ++collisionFrom;

@@ -25,11 +25,6 @@ game::Map::Map(const game::Map &rhs) {
 }
 
 void game::Map::generate() {
-
-
-
-
-
     _mapUpdated = true;
     _map.pop_front();
 
