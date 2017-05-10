@@ -11,21 +11,22 @@
 #include <random>
 
 namespace game {
-    enum blockType{
+    enum blockType {
         empty,
         staticFloor,
         ladder,
         quicksand,
         collapsingFloor,
         collFloor,
-        coin
+        coin,
+        startingPosition
     };
 
     class Map {
     public:
         Map();
 
-        Map(const Map& rhs);
+        Map(const Map &rhs);
 
         virtual ~Map() noexcept = default;
 
@@ -40,11 +41,19 @@ namespace game {
         uint16_t _height;
         uint16_t _width;
 
+        bool ladderIsBuilding = false;
+        uint8_t ladderPos = 0;
+
         std::random_device rd;
         std::mt19937 gen;
         std::uniform_int_distribution<> dis0_10;
         std::uniform_int_distribution<> dis1_3;
         std::uniform_int_distribution<> dis2_6;
+        std::uniform_int_distribution<> dis4_6;
+        std::uniform_int_distribution<> dis0_100;
+
+        uint8_t curLogicBlockSize = 4;
+        uint8_t curLogicBlockLine = 1;
     };
 
 }

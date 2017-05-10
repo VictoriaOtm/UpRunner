@@ -33,6 +33,13 @@ struct Block{
             }
         }
     }
+
+    void collect(){
+        if (blockType == game::blockType::coin){
+            blockType = game::blockType::empty;
+            blockSprite.setTextureRect(sf::IntRect(game::blockType::empty, 0, 128, 128));
+        }
+    }
 };
 
 namespace game {
@@ -56,6 +63,8 @@ namespace game {
     private:
         sf::Texture _blocksTexture;
         sf::RenderWindow &_window;
+
+        sf::Texture _coinTexture;
 
         const uint16_t _tileHeight = 64;
         const uint16_t _tileWidth = 64;

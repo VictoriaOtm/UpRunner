@@ -28,6 +28,8 @@ namespace game {
 
         sf::RenderWindow _window;
 
+        sf::View _camera;
+
         heroView _hero;
 
         mapView _map;

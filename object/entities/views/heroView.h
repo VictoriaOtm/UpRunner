@@ -63,8 +63,8 @@ namespace game {
 
         void gravityFall(int time);
 
-        int _tileXSize = 94;
-        int _tileYSize = 104;
+        const int _tileXSize = 94;
+        const int _tileYSize = 104;
 
         sf::Texture _texture;
 
@@ -77,6 +77,8 @@ namespace game {
         uint8_t _curFacing = heroSpritesFacing::Right;
 
         float _curFrame = 0;
+
+        float _speedOnMap = 0.5f;
 
         const double _speedFactor = 50;
 

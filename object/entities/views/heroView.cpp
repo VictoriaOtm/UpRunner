@@ -5,7 +5,7 @@
 #include <math.h>
 #include "heroView.h"
 
-game::heroView::heroView() throw(game::error::textureNotFound):_gameOver(false), _isFalling(true), _isLadder(false) {
+game::heroView::heroView() throw(game::error::textureNotFound): _gameOver(false), _isFalling(true), _isLadder(false) {
     if (_texture.loadFromFile("./textures/heroTS1.png")) {
         parseTexture();
     } else {
@@ -14,6 +14,8 @@ game::heroView::heroView() throw(game::error::textureNotFound):_gameOver(false),
 }
 
 void game::heroView::update(int time, const boost::circular_buffer<std::vector<Block>> &_block) {
+    _curSprite->move(0, _speedOnMap);
+
     collisionCheck(time, _block);
     //alterMovementVec();
     gravityFall(time);
@@ -151,7 +153,7 @@ sf::FloatRect game::heroView::getNextFrame(int time) {
 
 void game::heroView::resolveCollision(const uint8_t collisionFrom, const Block &collidedBlock) {
     if (collidedBlock.blockType == game::blockType::ladder) {
-        return;
+        _isLadder = true;
     }
 
     sf::FloatRect blockBounds = collidedBlock.blockSprite.getGlobalBounds();
@@ -200,7 +202,8 @@ void game::heroView::resolveCollision(const uint8_t collisionFrom, const Block &
         }
 
         case game::collision::colDownRight: {
-            if (_position.x + _tileXSize >= blockBounds.left + 43 && collidedBlock.blockType != game::blockType::quicksand) {
+            if (_position.x + _tileXSize >= blockBounds.left + 43 &&
+                collidedBlock.blockType != game::blockType::quicksand) {
                 _collision.down = true;
                 _position.y = blockBounds.top - _tileYSize;
             }
@@ -219,9 +222,9 @@ void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &c
             if (collisionFrom == game::collision::colDown ||
                 collisionFrom == game::collision::colDownRight ||
                 collisionFrom == game::collision::colDownLeft) {
-                if (_hp == 0){
+                if (_hp == 0) {
                     decreaseLifes();
-                    if (getLifes() == 0){
+                    if (getLifes() == 0) {
                         _gameOver = true;
                     }
                     increaseHp(_hpMax);
@@ -231,10 +234,22 @@ void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &c
             break;
         }
 
+        case game::blockType::coin : {
+            Block &sb = const_cast<Block &>(collidedBlock);
+            if (collisionFrom == game::collision::colDown
+                || collisionFrom == game::collision::colUp
+                || collisionFrom == game::collision::colRight
+                || collisionFrom == game::collision::colLeft) {
+                sb.collect();
+                increaseCoins();
+            }
+            break;
+        }
+
         case game::blockType::collapsingFloor :
-        case game::blockType::collFloor :{
-            Block& sb = const_cast<Block&>(collidedBlock);
-            if (collisionFrom == game::collision::colDown || collisionFrom == game::collision::colUp){
+        case game::blockType::collFloor : {
+            Block &sb = const_cast<Block &>(collidedBlock);
+            if (collisionFrom == game::collision::colDown || collisionFrom == game::collision::colUp) {
                 sb.breakBlock();
                 jump();
             }

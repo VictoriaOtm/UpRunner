@@ -6,8 +6,13 @@
 #include "Game.h"
 
 game::Game::Game() :
-        _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()), _map(_window),
+        _window(_config.getVideoMode(), _config.getWinTitle(), _config.getStyle()),
+        _camera(sf::FloatRect(0, 128, _config.getVideoMode().width, _config.getVideoMode().height)), _map(_window),
         _newGameMenu(_window, _config), _background(153, 210, 215) {
+
+    _camera.setSize(_config.getVideoMode().width, _config.getVideoMode().height);
+    _camera.setCenter(_config.getVideoMode().width / 2, _config.getVideoMode().height / 2);
+    _window.setView(_camera);
     _window.setKeyRepeatEnabled(false);
     _window.setFramerateLimit(_config.getMenuFPSLimit());
     _window.setVerticalSyncEnabled(_config.getVSync());
@@ -105,7 +110,7 @@ void game::Game::eventDispatcher() noexcept {
             }
 
             case sf::Event::KeyReleased: {
-                if (!_hero._gameOver){
+                if (!_hero._gameOver) {
                     switch (event.key.code) {
                         case sf::Keyboard::Key::Left: {
                             _hero.changeMovementVec(game::movement::right, 0);
@@ -152,4 +157,3 @@ void game::Game::updateGame(int time) noexcept {
     _gui.update(_hero);
     return;
 }
-
