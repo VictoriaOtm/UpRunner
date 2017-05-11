@@ -159,6 +159,6 @@ void game::Game::eventDispatcher() noexcept {
 void game::Game::updateGame(int time) noexcept {
     _map.update();
     _hero.update(time, _map);
-    _gui.update(_hero);
+    _gui.update(_hero, _map);
     return;
 }

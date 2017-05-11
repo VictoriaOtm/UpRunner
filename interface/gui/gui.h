@@ -8,6 +8,7 @@
 
 #include "../../utils/config.h"
 #include "../../object/entities/hero.h"
+#include "../../map/mapView.h"
 #include <SFML/Graphics.hpp>
 namespace game{
     class gui {
@@ -16,7 +17,7 @@ namespace game{
 
         void draw();
 
-        void update(const hero& _hero);
+        void update(const hero &_hero, mapView &_map);
 
     private:
         sf::RenderWindow &window;
@@ -33,6 +34,7 @@ namespace game{
 
         sf::Text _lifesNum;
         sf::Text _coinsNum;
+        sf::Text _level;
 
         sf::Font _font;
 

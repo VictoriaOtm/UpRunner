@@ -30,6 +30,8 @@ namespace game {
 
         virtual ~Map() noexcept = default;
 
+        std::size_t getCurrLine();
+
         void generate();
 
     protected:

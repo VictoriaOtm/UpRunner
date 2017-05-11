@@ -17,7 +17,7 @@ game::heroView::heroView(sf::RenderWindow &window) throw(game::error::textureNot
     }
 }
 
-void game::heroView::update(int time, const game::mapView& map) {
+void game::heroView::update(int time, const game::mapView &map) {
     _position.y += _speedOnMap;
 
     collisionCheck(time, map);
@@ -164,64 +164,64 @@ sf::FloatRect game::heroView::getNextFrame(int time) {
 void game::heroView::resolveCollision(const uint8_t collisionFrom, const Block &collidedBlock) {
     if (collidedBlock.blockType == game::blockType::ladder) {
         _isLadder = true;
-    }
+    } else {
+        sf::FloatRect blockBounds = collidedBlock.blockSprite.getGlobalBounds();
 
-    sf::FloatRect blockBounds = collidedBlock.blockSprite.getGlobalBounds();
+        switch (collisionFrom) {
+            case game::collision::colUp: {
+                _collision.up = true;
+                _position.y = blockBounds.top + blockBounds.height;
+                break;
+            }
 
-    switch (collisionFrom) {
-        case game::collision::colUp: {
-            _collision.up = true;
-            _position.y = blockBounds.top + blockBounds.height;
-            break;
-        }
+            case game::collision::colLeft: {
+                _collision.left = true;
+                _position.x = blockBounds.left + blockBounds.width;
+                break;
+            }
 
-        case game::collision::colLeft: {
-            _collision.left = true;
-            _position.x = blockBounds.left + blockBounds.width;
-            break;
-        }
-
-        case game::collision::colDown: {
-            _collision.down = true;
-            _position.y = blockBounds.top - _tileYSize;
-            break;
-        }
-
-        case game::collision::colRight: {
-            _collision.right = true;
-            _position.x = blockBounds.left - _tileXSize;
-            break;
-        }
-
-        case game::collision::colUpLeft : {
-            _collision.left = true;
-            break;
-        }
-
-        case game::collision::colUpRight: {
-            _collision.right = true;
-            break;
-        }
-
-        case game::collision::colDownLeft: {
-            if (_position.x <= blockBounds.left + 42 && collidedBlock.blockType != game::blockType::quicksand) {
+            case game::collision::colDown: {
                 _collision.down = true;
                 _position.y = blockBounds.top - _tileYSize;
+                break;
             }
-            break;
-        }
 
-        case game::collision::colDownRight: {
-            if (_position.x + _tileXSize >= blockBounds.left + 43 &&
-                collidedBlock.blockType != game::blockType::quicksand) {
-                _collision.down = true;
-                _position.y = blockBounds.top - _tileYSize;
+            case game::collision::colRight: {
+                _collision.right = true;
+                _position.x = blockBounds.left - _tileXSize;
+                break;
             }
-            break;
-        }
 
-        default: {
-            break;
+            case game::collision::colUpLeft : {
+                _collision.left = true;
+                break;
+            }
+
+            case game::collision::colUpRight: {
+                _collision.right = true;
+                break;
+            }
+
+            case game::collision::colDownLeft: {
+                if (_position.x <= blockBounds.left + 42 && collidedBlock.blockType != game::blockType::quicksand) {
+                    _collision.down = true;
+                    _position.y = blockBounds.top - _tileYSize;
+                }
+                break;
+            }
+
+            case game::collision::colDownRight: {
+                if (_position.x + _tileXSize >= blockBounds.left + 43 &&
+                    collidedBlock.blockType != game::blockType::quicksand) {
+                    _collision.down = true;
+                    _position.y = blockBounds.top - _tileYSize;
+                }
+                break;
+            }
+
+            default: {
+                break;
+            }
         }
     }
 }
@@ -256,6 +256,13 @@ void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &c
             break;
         }
 
+        case game::blockType::ladder : {
+            if (collisionFrom == game::collision::colDown){
+                _collision.down = true;
+            }
+            break;
+        }
+
         case game::blockType::collapsingFloor :
         case game::blockType::collFloor : {
             Block &sb = const_cast<Block &>(collidedBlock);
@@ -282,12 +289,13 @@ bool game::heroView::checkBounds(sf::FloatRect &heroNextRect) {
         return false;
     }
 
-    if(heroNextRect.left <= _window.getView().getCenter().x - _window.getView().getSize().x / 2){
-        _position.x = _window.getView().getCenter().x - _window.getView().getSize().x / 2;
+    if (heroNextRect.left <= _window.getView().getCenter().x - _window.getView().getSize().x / 2) {
+        _position.x = _window.getView().getCenter().x + _window.getView().getSize().x / 2 - _tileXSize;
+//        _collision.left = true;
     }
 
-    if(heroNextRect.left + _tileXSize >= _window.getView().getCenter().x + _window.getView().getSize().x / 2){
-        _position.x = _window.getView().getCenter().x - _window.getView().getSize().x / 2 - _tileXSize;
+    if (heroNextRect.left + _tileXSize >= _window.getView().getCenter().x + _window.getView().getSize().x / 2) {
+        _position.x = _window.getView().getCenter().x - _window.getView().getSize().x / 2;
     }
 
 //    return false;
@@ -300,22 +308,22 @@ void game::heroView::collisionCheck(int time, const game::mapView &map) {
     if (checkBounds(heroNextRect)) {
 
         uint16_t yPos = 0;
-        while(heroNextRect.top > map.blocks[yPos][0].blockSprite.getPosition().y){
+        while (heroNextRect.top > map.blocks[yPos][0].blockSprite.getPosition().y) {
             yPos++;
-            if(yPos == map.blocks.size()){
+            if (yPos == map.blocks.size()) {
                 break;
             }
         }
-        yPos--;
+        yPos != 0 ? yPos-- : yPos;
 
         uint16_t xPos = 0;
-        while (heroNextRect.left > map.blocks[yPos][xPos].blockSprite.getPosition().x){
+        while (heroNextRect.left > map.blocks[yPos][xPos].blockSprite.getPosition().x) {
             xPos++;
-            if(xPos == map.blocks.size()){
+            if (xPos == map.blocks.size()) {
                 break;
             }
         }
-        xPos--;
+        xPos != 0? xPos-- : xPos;
 
         uint16_t yPosLimit =
                 yPos + 3 >= map.blocks.size() ?
@@ -332,7 +340,7 @@ void game::heroView::collisionCheck(int time, const game::mapView &map) {
         for (int i = yPos; i < yPosLimit; i++) {
             for (int j = xPos; j < xPosLimit; j++) {
                 if (heroNextRect.intersects(map.blocks[i][j].blockSprite.getGlobalBounds()) &&
-                        map.blocks[i][j].blockType != game::blockType::empty) {
+                    map.blocks[i][j].blockType != game::blockType::empty) {
 
                     if (map.blocks[i][j].blockType != game::blockType::coin) {
                         resolveCollision(collisionFrom, map.blocks[i][j]);
@@ -345,21 +353,6 @@ void game::heroView::collisionCheck(int time, const game::mapView &map) {
         }
     }
 
-}
-
-
-void game::heroView::alterMovementVec() {
-    if ((_movementVector.x == game::movement::right && _collision.right) ||
-        (_movementVector.x == game::movement::left && _collision.left)) {
-
-        _movementVector.x = 0;
-    }
-
-    if ((_movementVector.y == game::movement::up && _collision.up) ||
-        (_movementVector.y == game::movement::down && _collision.down)) {
-
-        _movementVector.y = 0;
-    }
 }
 
 void game::heroView::gravityFall(int time) {
@@ -375,8 +368,8 @@ void game::heroView::gravityFall(int time) {
 }
 
 void game::heroView::setHeroToPoint(const sf::Vector2f point) {
-    _position.x = point.x;
-    _position.y = point.y - _tileYSize - 1;
+    _position.x = point.x + _tileXSize / 2;
+    _position.y = point.y - _tileYSize * 1.5f;
 }
 
 

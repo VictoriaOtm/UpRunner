@@ -3,6 +3,7 @@
 //
 
 #include "gui.h"
+#include "../../map/mapView.h"
 
 game::gui::gui(sf::RenderWindow &window) : window(window) {
     if (_hpFillT.loadFromFile("./textures/hpFill.png")
@@ -20,12 +21,15 @@ game::gui::gui(sf::RenderWindow &window) : window(window) {
     if (_font.loadFromFile("./interface/a_Alterna.ttf")) {
         _lifesNum.setFont(_font);
         _coinsNum.setFont(_font);
+        _level.setFont(_font);
 
         _lifesNum.setCharacterSize(28);
         _coinsNum.setCharacterSize(28);
+        _level.setCharacterSize(28);
 
         _lifesNum.setColor(sf::Color::White);
         _coinsNum.setColor(sf::Color::White);
+        _level.setColor(sf::Color::White);
 
     } else throw game::error::fontNotFound("Font not found");
 
@@ -40,9 +44,10 @@ void game::gui::draw() {
 
     window.draw(_lifesNum);
     window.draw(_coinsNum);
+    window.draw(_level);
 }
 
-void game::gui::update(const hero &_hero) {
+void game::gui::update(const hero &_hero, mapView &_map) {
     sf::Vector2f position =
             window.getView().getCenter() - sf::Vector2f(window.getView().getSize().x / 2, window.getView().getSize().y / 2);
     _hpFill.setTextureRect(sf::Rect<int>(0, 0, _hero.getHp(), 50));
@@ -55,9 +60,11 @@ void game::gui::update(const hero &_hero) {
 
     _lifesNum.setPosition(position + sf::Vector2f(92, 95));
     _coinsNum.setPosition(position + sf::Vector2f(217, 95));
+    _level.setPosition(position + sf::Vector2f(25, 165));
 
     _lifesNum.setString(std::to_string(_hero.getLifes()));
     _coinsNum.setString(std::to_string(_hero.getCoins()));
+    _level.setString(std::to_string(_map.getCurrLine()));
 
 }
 

@@ -45,7 +45,7 @@ struct Block{
 };
 
 namespace game {
-    class mapView : game::Map {
+    class mapView : public game::Map {
     public:
         mapView(sf::RenderWindow &window);
 
@@ -62,6 +62,7 @@ namespace game {
         const float tileWidth() const;
 
         sf::Vector2f startingPoint();
+
 
         boost::circular_buffer<std::vector<Block>> blocks;
     private:

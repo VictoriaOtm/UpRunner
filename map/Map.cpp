@@ -13,7 +13,7 @@ game::Map::Map() : _map(), curLine(2), _height(16), _width(12), _mapUpdated(fals
     _map[_map.size() - 3].resize(_width, game::blockType::staticFloor);
     _map[_map.size() - 2].resize(_width, game::blockType::staticFloor);
     _map[_map.size() - 1].resize(_width, game::blockType::empty);
-    _map[_map.size() - 1][4] = _map[_map.size() - 1][5] = _map[_map.size() - 1][6] = game::blockType ::staticFloor;
+    _map[_map.size() - 1][4] = _map[_map.size() - 1][5] = _map[_map.size() - 1][6] = game::blockType::staticFloor;
 
 
     for (size_t i = 0; i < _map.size() - 3; i++) {
@@ -155,19 +155,24 @@ void game::Map::generate() {
         case 2: {
             newLine.resize(_width, game::blockType::empty);
 
-            for (uint8_t i = 0; i < _width; i++) {
-                if (_map[_map.size() - 2][i] == game::blockType::empty) {
-                    uint8_t stepSize = static_cast<uint8_t >(dis1_3(gen) + 1);
-                    uint8_t blockType = game::blockType::staticFloor;
+            uint8_t stepsInLineAmount = 1 + static_cast<uint8_t >(dis1_3(gen)) % 2;
 
-                    if (dis0_10(gen) * dis0_10(gen) < 65) {
-                        blockType = game::blockType::collapsingFloor;
-                    }
+            for (uint8_t j = 0; j < stepsInLineAmount; j++) {
 
-                    for (uint8_t j = i + static_cast<uint8_t >(dis0_10(gen) / 5); j < stepSize + i; j++) {
-                        newLine[j] = blockType;
+                for (uint8_t i = 0; i < _width; i++) {
+                    if (_map[_map.size() - 2][i] == game::blockType::empty) {
+                        uint8_t stepSize = static_cast<uint8_t >(dis1_3(gen) + 1);
+                        uint8_t blockType = game::blockType::staticFloor;
+
+                        if (dis0_10(gen) * dis0_10(gen) < 65) {
+                            blockType = game::blockType::collapsingFloor;
+                        }
+
+                        for (uint8_t j = i + static_cast<uint8_t >(dis0_10(gen) / 5); j < stepSize + i; j++) {
+                            newLine[j] = blockType;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
 
@@ -221,4 +226,8 @@ void game::Map::generate() {
     _map.push_back(newLine);
     curLine++;
     curLogicBlockLine++;
+}
+
+std::size_t game::Map::getCurrLine() {
+    return curLine;
 }
