@@ -13,6 +13,7 @@
 struct Block{
     sf::Sprite blockSprite;
     uint8_t blockType;
+    uint8_t hitNum = 0;
 
     void breakBlock(){
         switch (blockType){
@@ -24,9 +25,14 @@ struct Block{
             }
 
             case game::blockType::collFloor: {
-                blockType = game::blockType::empty;
-
-                blockSprite.setTextureRect(sf::IntRect(game::blockType::empty, 0, 128, 128));
+                if (hitNum >= 6){
+                    blockType = game::blockType::empty;
+                    blockSprite.setTextureRect(sf::IntRect(game::blockType::empty, 0, 128, 128));
+                    hitNum = 0;
+                }
+                else{
+                    ++hitNum;
+                }
                 break;
             }
 

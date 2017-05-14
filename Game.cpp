@@ -35,7 +35,7 @@ void game::Game::run() throw(std::runtime_error) {
     sf::Time elapsed;
     _window.clear(_background);
 
-    _hero.setHeroToPoint(_map.startingPoint());
+    //_hero.setHeroToPoint(_map.startingPoint());
 
     mainTheme.play();
     mainTheme.setLoop(true);

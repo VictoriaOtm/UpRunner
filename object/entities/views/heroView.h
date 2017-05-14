@@ -61,8 +61,6 @@ namespace game {
 
         void affectCollision(const uint8_t collisionFrom, const Block &collidedBlock);
 
-        void alterMovementVec();
-
         void gravityFall(int time);
 
         float _tileXSize = 94;

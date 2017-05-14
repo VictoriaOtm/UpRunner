@@ -268,7 +268,6 @@ void game::heroView::affectCollision(const uint8_t collisionFrom, const Block &c
             Block &sb = const_cast<Block &>(collidedBlock);
             if (collisionFrom == game::collision::colDown || collisionFrom == game::collision::colUp) {
                 sb.breakBlock();
-                jump();
             }
             break;
         }

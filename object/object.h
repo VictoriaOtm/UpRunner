@@ -27,7 +27,7 @@ namespace game{
     protected:
 
         struct position {
-            position() : x(), y() {}
+            position() : x(100), y(800) {}
 
             position(double newX, double newY) : x(newX), y(newY) {}
 
