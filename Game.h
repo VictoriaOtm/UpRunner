@@ -13,6 +13,7 @@
 #include "interface/menu/newGameMenu.h"
 #include "map/Map.h"
 #include "map/mapView.h"
+#include <SFML/Audio.hpp>
 
 namespace game {
     class Game {
@@ -39,6 +40,10 @@ namespace game {
         game::menu::newGameMenu _newGameMenu;
 
         sf::Color _background;
+
+        sf::Music mainTheme;
+
+        sf::Music gameOver;
 
         bool _isGame = false;
 

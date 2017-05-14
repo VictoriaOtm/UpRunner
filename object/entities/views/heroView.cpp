@@ -114,8 +114,8 @@ void game::heroView::draw() {
 }
 
 void game::heroView::parseTexture() {
-    float scaleParameterH = static_cast<float>(_window.getSize().y) / 960.f;
-    float scaleParameterW = static_cast<float>(_window.getSize().x) / 768.f;
+    float scaleParameterH = static_cast<float>(_window.getSize().y) / (float)_window.getSize().y;
+    float scaleParameterW = static_cast<float>(_window.getSize().x) / (float)_window.getSize().x;
 
     _sprites.resize(3);
 

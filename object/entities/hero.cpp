@@ -20,6 +20,9 @@ namespace game {
     }
 
     void hero::increaseCoins() {
+        soundBuf.loadFromFile("./sounds/coin.ogg");
+        coinSound.setBuffer(soundBuf);
+        coinSound.play();
         ++_coins;
     }
 

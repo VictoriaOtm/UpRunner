@@ -19,6 +19,14 @@ game::Game::Game() :
     _window.setFramerateLimit(_config.getMenuFPSLimit());
     _window.setVerticalSyncEnabled(_config.getVSync());
 
+    if (!mainTheme.openFromFile("./sounds/mainTheme.ogg")) {
+        throw game::error::soundNotFound("Sound not found");
+    }
+
+    if (!gameOver.openFromFile("./sounds/gameOver.ogg")) {
+        throw game::error::soundNotFound("Sound not found");
+    }
+
 }
 
 
@@ -29,6 +37,11 @@ void game::Game::run() throw(std::runtime_error) {
 
     _hero.setHeroToPoint(_map.startingPoint());
 
+    mainTheme.play();
+    mainTheme.setLoop(true);
+
+    bool goFlag = false;
+
     while (_window.isOpen()) {
         if (_isGame) {
             if (!_hero._gameOver) {
@@ -36,14 +49,24 @@ void game::Game::run() throw(std::runtime_error) {
                 updateWindow();
                 updateGame(elapsed.asMilliseconds());
             } else {
-                _window.clear(_background);
+                mainTheme.pause();
+                if (gameOver.getStatus() == sf::SoundSource::Status::Stopped
+                    && !goFlag){
+                    gameOver.play();
+                    goFlag = true;
+                }
+                    _window.clear(_background);
                 _newGameMenu.drawGO();
             }
             eventDispatcher();
         } else if (_isMenu) {
+            mainTheme.pause();
+
             _newGameMenu.runNew();
             _isMenu = false;
             _isGame = true;
+
+            mainTheme.play();
         }
     }
 

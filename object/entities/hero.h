@@ -7,6 +7,7 @@
 
 
 #include "entity.h"
+#include <SFML/Audio.hpp>
 
 namespace game{
     class hero: public entity {
@@ -30,6 +31,9 @@ namespace game{
     private:
         unsigned int _coins;
         uint16_t _lifes;
+
+        sf::SoundBuffer soundBuf;
+        sf::Sound coinSound;
     };
 }
 

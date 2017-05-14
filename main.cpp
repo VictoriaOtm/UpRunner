@@ -9,7 +9,7 @@ int main() {
     }
     catch (std::runtime_error& e){
         //logging
-        std::cerr << e.what();
+        std::cout << e.what();
     }
     return 0;
 }

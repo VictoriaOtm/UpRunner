@@ -64,7 +64,7 @@ void game::gui::update(const hero &_hero, mapView &_map) {
 
     _lifesNum.setString(std::to_string(_hero.getLifes()));
     _coinsNum.setString(std::to_string(_hero.getCoins()));
-    _level.setString(std::to_string(_map.getCurrLine()));
+    _level.setString(std::to_string(_map.getCurrLine() - 17));
 
 }
 
